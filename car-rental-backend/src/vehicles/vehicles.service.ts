@@ -106,60 +106,59 @@ export class VehiclesService {
     };
   }
 
-  async searchVehicles(
-    query: string,
-    startDate?: string,
-    endDate?: string,
-    category?: string,
-    location?: string,
-  ): Promise<ApiResponse<VehicleResponseDto[]>> {
-    const where: VehicleSearchFilters = {
-      OR: [
+  async searchVehicles(options: {
+    query?: string;
+    category?: string;
+    transmission?: string;
+    fuelType?: string;
+    minSeats?: number;
+    maxSeats?: number;
+    minDailyRate?: number;
+    maxDailyRate?: number;
+    location?: string;
+  } = {}): Promise<ApiResponse<VehicleResponseDto[]>> {
+    const {
+      query,
+      category,
+      transmission,
+      fuelType,
+      minSeats,
+      maxSeats,
+      minDailyRate,
+      maxDailyRate,
+      location,
+    } = options;
+
+    const where: any = {};
+
+    if (query) {
+      where.OR = [
         { model: { contains: query, mode: 'insensitive' } },
-        { category: { contains: query, mode: 'insensitive' } },
         { description: { contains: query, mode: 'insensitive' } },
-      ],
-      isAvailable: true,
-    };
+        { licensePlate: { contains: query, mode: 'insensitive' } },
+      ];
+    }
 
     if (category) where.category = category;
+    if (transmission) where.transmission = transmission;
+    if (fuelType) where.fuelType = fuelType;
     if (location) where.location = { contains: location, mode: 'insensitive' };
 
-    // If date range is provided, check for conflicting bookings
-    if (startDate && endDate) {
-      const start = new Date(startDate);
-      const end = new Date(endDate);
+    if (minSeats || maxSeats) {
+      where.seats = {};
+      if (minSeats) where.seats.gte = minSeats;
+      if (maxSeats) where.seats.lte = maxSeats;
+    }
 
-      const conflictingBookings = await this.prisma.booking.findMany({
-        where: {
-          vehicleId: { not: undefined },
-          OR: [
-            {
-              AND: [{ startDate: { lte: start } }, { endDate: { gte: start } }],
-            },
-            {
-              AND: [{ startDate: { lte: end } }, { endDate: { gte: end } }],
-            },
-            {
-              AND: [{ startDate: { gte: start } }, { endDate: { lte: end } }],
-            },
-          ],
-          status: { in: ['CONFIRMED', 'PENDING'] },
-        },
-        select: { vehicleId: true },
-      });
-
-      const conflictingVehicleIds = conflictingBookings.map(
-        (booking) => booking.vehicleId,
-      );
-      if (conflictingVehicleIds.length > 0) {
-        where.id = { notIn: conflictingVehicleIds };
-      }
+    if (minDailyRate || maxDailyRate) {
+      where.dailyRate = {};
+      if (minDailyRate) where.dailyRate.gte = minDailyRate;
+      if (maxDailyRate) where.dailyRate.lte = maxDailyRate;
     }
 
     const vehicles = await this.prisma.vehicle.findMany({
       where,
-      orderBy: { dailyRate: 'asc' },
+      orderBy: { createdAt: 'desc' },
     });
 
     return {
@@ -379,15 +378,28 @@ export class VehiclesService {
       throw new BadRequestException('Vehicle ID is required');
     }
 
+    if (!userId) {
+      throw new BadRequestException('User ID is required');
+    }
+
     if (rating < 1 || rating > 5) {
       throw new BadRequestException('Rating must be between 1 and 5');
     }
 
-    const existingVehicle = await this.prisma.vehicle.findUnique({
+    // Check if vehicle exists
+    const vehicle = await this.prisma.vehicle.findUnique({
       where: { id },
     });
-    if (!existingVehicle) {
+    if (!vehicle) {
       throw new NotFoundException('Vehicle not found');
+    }
+
+    // Check if user exists
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+    });
+    if (!user) {
+      throw new NotFoundException('User not found');
     }
 
     // Check if user has already reviewed this vehicle
@@ -399,7 +411,7 @@ export class VehiclesService {
     });
 
     if (existingReview) {
-      throw new ConflictException('You have already reviewed this vehicle');
+      throw new ConflictException('User has already reviewed this vehicle');
     }
 
     const review = await this.prisma.review.create({
@@ -408,7 +420,7 @@ export class VehiclesService {
         userId: userId,
         rating,
         comment,
-        isApproved: false, // Requires admin approval
+        isApproved: false, // Reviews need approval by default
       },
       include: {
         user: {
@@ -423,8 +435,204 @@ export class VehiclesService {
 
     return {
       success: true,
-      message: 'Review submitted successfully and pending approval',
-      data: review,
+      message: 'Review created successfully',
+      data: {
+        id: review.id,
+        userId: review.userId,
+        vehicleId: review.vehicleId,
+        bookingId: review.bookingId,
+        rating: review.rating,
+        comment: review.comment,
+        isApproved: review.isApproved,
+        createdAt: review.createdAt,
+        updatedAt: review.updatedAt,
+        user: {
+          id: review.user.id,
+          name: review.user.name,
+          profileImage: review.user.profileImage ?? null,
+        },
+      },
+    };
+  }
+
+  async getAvailableVehicles(options: {
+    category?: string;
+    location?: string;
+    minSeats?: number;
+  } = {}): Promise<ApiResponse<VehicleResponseDto[]>> {
+    const { category, location, minSeats } = options;
+    
+    const where: any = { isAvailable: true };
+    
+    if (category) where.category = category;
+    if (location) where.location = { contains: location, mode: 'insensitive' };
+    if (minSeats) where.seats = { gte: minSeats };
+
+    const vehicles = await this.prisma.vehicle.findMany({
+      where,
+      orderBy: { createdAt: 'desc' },
+    });
+
+    return {
+      success: true,
+      message: 'Available vehicles retrieved successfully',
+      data: vehicles.map(vehicle => this.transformVehicleToDto(vehicle)),
+    };
+  }
+
+  async getVehiclesByCategory(category: string): Promise<ApiResponse<VehicleResponseDto[]>> {
+    const vehicles = await this.prisma.vehicle.findMany({
+      where: { category: { equals: category, mode: 'insensitive' } },
+      orderBy: { createdAt: 'desc' },
+    });
+
+    return {
+      success: true,
+      message: 'Vehicles by category retrieved successfully',
+      data: vehicles.map(vehicle => this.transformVehicleToDto(vehicle)),
+    };
+  }
+
+  async getVehiclesByLocation(location: string): Promise<ApiResponse<VehicleResponseDto[]>> {
+    const vehicles = await this.prisma.vehicle.findMany({
+      where: { location: { contains: location, mode: 'insensitive' } },
+      orderBy: { createdAt: 'desc' },
+    });
+
+    return {
+      success: true,
+      message: 'Vehicles by location retrieved successfully',
+      data: vehicles.map(vehicle => this.transformVehicleToDto(vehicle)),
+    };
+  }
+
+  async getVehicleStats(options: { startDate?: string; endDate?: string } = {}): Promise<ApiResponse<any>> {
+    const { startDate, endDate } = options;
+    
+    const where: any = {};
+    if (startDate || endDate) {
+      where.createdAt = {};
+      if (startDate) where.createdAt.gte = new Date(startDate);
+      if (endDate) where.createdAt.lte = new Date(endDate);
+    }
+
+    const [
+      totalVehicles,
+      availableVehicles,
+      maintenanceVehicles,
+      categoryStats,
+    ] = await Promise.all([
+      this.prisma.vehicle.count({ where }),
+      this.prisma.vehicle.count({ where: { ...where, isAvailable: true } }),
+      this.prisma.vehicle.count({ where: { ...where, status: 'MAINTENANCE' } }),
+      this.prisma.vehicle.groupBy({
+        by: ['category'],
+        where,
+        _count: { id: true },
+      }),
+    ]);
+
+    return {
+      success: true,
+      message: 'Vehicle statistics retrieved successfully',
+      data: {
+        totalVehicles,
+        availableVehicles,
+        maintenanceVehicles,
+        categoryStats,
+      },
+    };
+  }
+
+  async updateBulkStatus(bulkStatusDto: { vehicleIds: string[]; status: string }): Promise<ApiResponse<any>> {
+    const { vehicleIds, status } = bulkStatusDto;
+
+    if (!vehicleIds || vehicleIds.length === 0) {
+      throw new BadRequestException('Vehicle IDs are required');
+    }
+
+    if (!status) {
+      throw new BadRequestException('Status is required');
+    }
+
+    const result = await this.prisma.vehicle.updateMany({
+      where: {
+        id: { in: vehicleIds },
+      },
+      data: {
+        status: status as any,
+        isAvailable: status === 'ACTIVE',
+      },
+    });
+
+    return {
+      success: true,
+      message: 'Bulk vehicle status updated successfully',
+      data: {
+        updatedCount: result.count,
+      },
+    };
+  }
+
+  async getVehicleImages(id: string): Promise<ApiResponse<string[]>> {
+    if (!id) {
+      throw new BadRequestException('Vehicle ID is required');
+    }
+
+    const vehicle = await this.prisma.vehicle.findUnique({
+      where: { id },
+      select: { images: true },
+    });
+
+    if (!vehicle) {
+      throw new NotFoundException('Vehicle not found');
+    }
+
+    return {
+      success: true,
+      message: 'Vehicle images retrieved successfully',
+      data: vehicle.images || [],
+    };
+  }
+
+  async uploadVehicleImages(id: string, images: any[]): Promise<ApiResponse<any>> {
+    if (!id) {
+      throw new BadRequestException('Vehicle ID is required');
+    }
+
+    if (!images || images.length === 0) {
+      throw new BadRequestException('Images are required');
+    }
+
+    // Check if vehicle exists
+    const vehicle = await this.prisma.vehicle.findUnique({
+      where: { id },
+    });
+
+    if (!vehicle) {
+      throw new NotFoundException('Vehicle not found');
+    }
+
+    // For now, we'll just return a success message
+    // In a real implementation, you would upload images to Cloudinary or similar service
+    const imageUrls = images.map((image, index) => `https://example.com/vehicle-${id}-image-${index}.jpg`);
+
+    // Update vehicle with new images
+    const updatedVehicle = await this.prisma.vehicle.update({
+      where: { id },
+      data: {
+        images: [...(vehicle.images || []), ...imageUrls],
+      },
+    });
+
+    return {
+      success: true,
+      message: 'Vehicle images uploaded successfully',
+      data: {
+        vehicleId: id,
+        uploadedImages: imageUrls,
+        totalImages: updatedVehicle.images.length,
+      },
     };
   }
 }

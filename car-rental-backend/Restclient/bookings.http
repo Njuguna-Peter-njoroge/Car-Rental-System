@@ -1,3 +1,7 @@
+### Environment Variables
+@baseUrl = http://localhost:3000
+@authToken = Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI3YjRiNTJlNC1iNDRkLTQxMmUtYWNjZi1kNGEzZGQ3MmIwNWYiLCJlbWFpbCI6Im5qdWd1bmFocGV0ZXJuam9yb2dlQGdtYWlsLmNvbSIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc1MTIzNDE0NywiZXhwIjoxNzUxMzIwNTQ3fQ.vMcfy0RoX39xVv5HhEqZk88lbHCY9RQAF31D0SI1yPE
+
 ### Booking & Reservation API Testing
 ### Base URL: {{baseUrl}}/bookings
 ### Authentication Required for all endpoints
@@ -140,15 +144,3 @@ Authorization: Bearer {{authToken}}
   "notes": "Day trip, budget-friendly option"
 }
 
-### Booking Status Flow:
-# 1. PENDING - Initial status when booking is created
-# 2. CONFIRMED - Admin/Agent confirms the booking
-# 3. COMPLETED - Booking period has ended
-# 4. CANCELLED - Booking was cancelled by user or admin
-
-### Error Scenarios to Test:
-# - Try to book unavailable vehicle
-# - Try to book overlapping dates
-# - Try to modify completed/cancelled booking
-# - Try to access booking that doesn't belong to user
-# - Try to access without authentication 

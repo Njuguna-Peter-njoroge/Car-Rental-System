@@ -1,6 +1,6 @@
 ### Environment Variables
 @baseUrl = http://localhost:3000
-@authToken = Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI3YjRiNTJlNC1iNDRkLTQxMmUtYWNjZi1kNGEzZGQ3MmIwNWYiLCJlbWFpbCI6Im5qdWd1bmFocGV0ZXJuam9yb2dlQGdtYWlsLmNvbSIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc1MTIwNjE5NiwiZXhwIjoxNzUxMjkyNTk2fQ.v8ijMlaL0oDkqLMU5XNTusKA4lW49Sj-Ny7BWIiBqJQ
+@authToken = Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI3YjRiNTJlNC1iNDRkLTQxMmUtYWNjZi1kNGEzZGQ3MmIwNWYiLCJlbWFpbCI6Im5qdWd1bmFocGV0ZXJuam9yb2dlQGdtYWlsLmNvbSIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc1MTIzMDc0NSwiZXhwIjoxNzUxMzE3MTQ1fQ.agW5-uYgPlY9zCkSKC_G6lbdgtcrTkD4Nd0y-8nOZxM
 
 ### 1. Create a Vehicle (Admin/Agent only)
 POST {{baseUrl}}/vehicles
@@ -10,8 +10,8 @@ Authorization: {{authToken}}
 {
   "model": "Toyota Corolla",
   "year": 2022,
-  "licensePlate": "htgddvd",
-  "vin": "1HGCM82633A004352",
+  "licensePlate": "hteeddvd",
+  "vin": "1HGCM4543633A004352",
   "category": "Sedan",
   "transmission": "Automatic",
   "fuelType": "Gasoline",
@@ -40,7 +40,7 @@ GET {{baseUrl}}/vehicles?category=Sedan&isAvailable=true&minDailyRate=30&maxDail
 Authorization: {{authToken}}
 
 ### 5. Get Vehicle by ID (Public)
-GET {{baseUrl}}/vehicles/{{vehicleId}}
+GET {{baseUrl}}/vehicles/595b1feb-65af-46b8-94c5-e4674c9941c9
 Authorization: {{authToken}}
 
 ### 6. Search Vehicles (Public)
@@ -60,7 +60,7 @@ GET {{baseUrl}}/vehicles/available?category=Sedan&location=New York&minSeats=4
 Authorization: {{authToken}}
 
 ### 10. Update Vehicle (Admin/Agent only)
-PATCH {{baseUrl}}/vehicles/cc389c78-7b29-4163-8659-cdd2271922d4
+PATCH {{baseUrl}}/vehicles/86f1a73d-a681-4d73-b83c-b97103314834
 Content-Type: application/json
 Authorization: {{authToken}}
 
@@ -72,15 +72,15 @@ Authorization: {{authToken}}
 }
 
 ### 11. Delete Vehicle (Admin only)
-DELETE {{baseUrl}}/vehicles/cc389c78-7b29-4163-8659-cdd2271922d4
+DELETE {{baseUrl}}/vehicles/86f1a73d-a681-4d73-b83c-b97103314834
 Authorization: {{authToken}}
 
 ### 12. Get Vehicle Reviews (Public)
-GET {{baseUrl}}/vehicles/{{vehicleId}}/reviews
+GET {{baseUrl}}/vehicles/27b8be4d-3f48-4acf-8cad-3f27ec40c9bc/reviews
 Authorization: {{authToken}}
 
 ### 13. Create Vehicle Review (Authenticated users)
-POST {{baseUrl}}/vehicles/cc389c78-7b29-4163-8659-cdd2271922d4/reviews
+POST {{baseUrl}}/vehicles/27b8be4d-3f48-4acf-8cad-3f27ec40c9bc/reviews
 Content-Type: application/json
 Authorization: {{authToken}}
 
@@ -94,10 +94,7 @@ GET {{baseUrl}}/vehicles/stats
 Authorization: {{authToken}}
 
 ### 15. Get Vehicle Statistics with Date Range
-GET {{baseUrl}}/vehicles/stats?startDate=2024-01-01&endDate=2024-12-31
-Authorization: {{authToken}}
-
-### 16. Bulk Update Vehicle Status (Admin only)
+GET {{baseUrl}}/vehicles/stats?startDate=2024-01-01&endD/22
 PATCH {{baseUrl}}/vehicles/bulk-status
 Content-Type: application/json
 Authorization: {{authToken}}
@@ -107,20 +104,20 @@ Authorization: {{authToken}}
   "status": "MAINTENANCE"
 }
 
-### 17. Get Vehicles by Category (Public)
-GET {{baseUrl}}/vehicles/category/Sedan
+### 17. Get Vehicles by Category (Public)/2222
+GET {{baseUrl}}/vehicles/category/Tesla Model 3
 Authorization: {{authToken}}
 
-### 18. Get Vehicles by Location (Public)
+### 18. Get Vehicles by Location (Public)/22
 GET {{baseUrl}}/vehicles/location/New York
 Authorization: {{authToken}}
 
 ### 19. Get Vehicle Images (Public)
-GET {{baseUrl}}/vehicles/{{vehicleId}}/images
+GET {{baseUrl}}/vehicles/595b1feb-65af-46b8-94c5-e4674c9941c9/images
 Authorization: {{authToken}}
 
 ### 20. Upload Vehicle Images (Admin/Agent only)
-POST {{baseUrl}}/vehicles/cc389c78-7b29-4163-8659-cdd2271922d4/images
+POST {{baseUrl}}/vehicles/595b1feb-65af-46b8-94c5-e4674c9941c9/images
 Content-Type: multipart/form-data
 Authorization: {{authToken}}
 
@@ -142,7 +139,7 @@ Content-Type: application/json
 
 {
   "name": "Test User",
-  "email": "testuser@example.com",
+  "email": "testuser25@example.com",
   "password": "Password123!",
   "role": "CUSTOMER"
 }
