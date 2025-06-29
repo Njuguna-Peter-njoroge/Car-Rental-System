@@ -1,0 +1,154 @@
+### Booking & Reservation API Testing
+### Base URL: {{baseUrl}}/bookings
+### Authentication Required for all endpoints
+
+### 1. Create a New Booking
+POST {{baseUrl}}/bookings
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "vehicleId": "{{vehicleId}}",
+  "startDate": "2025-07-01T10:00:00.000Z",
+  "endDate": "2025-07-03T18:00:00.000Z",
+  "pickupLocation": "New York Airport",
+  "returnLocation": "New York Downtown",
+  "notes": "Need GPS and child seat",
+  "couponCode": "SUMMER2025"
+}
+
+### 2. Get All Bookings (Admin/Agent)
+GET {{baseUrl}}/bookings
+Authorization: Bearer {{authToken}}
+
+### 3. Get All Bookings with Filters
+GET {{baseUrl}}/bookings?status=PENDING&page=1&limit=10
+Authorization: Bearer {{authToken}}
+
+### 4. Get My Bookings (Current User)
+GET {{baseUrl}}/bookings/me
+Authorization: Bearer {{authToken}}
+
+### 5. Get My Bookings with Filters
+GET {{baseUrl}}/bookings/me?status=CONFIRMED&page=1&limit=5
+Authorization: Bearer {{authToken}}
+
+### 6. Get Specific Booking by ID
+GET {{baseUrl}}/bookings/{{bookingId}}
+Authorization: Bearer {{authToken}}
+
+### 7. Update Booking (Modify)
+PATCH {{baseUrl}}/bookings/{{bookingId}}
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "startDate": "2025-07-02T10:00:00.000Z",
+  "endDate": "2025-07-04T18:00:00.000Z",
+  "pickupLocation": "New York Central Station",
+  "returnLocation": "New York Airport",
+  "notes": "Updated pickup location and extended rental period"
+}
+
+### 8. Update Booking Status (Admin/Agent)
+PATCH {{baseUrl}}/bookings/{{bookingId}}
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "status": "CONFIRMED"
+}
+
+### 9. Cancel Booking
+DELETE {{baseUrl}}/bookings/{{bookingId}}
+Authorization: Bearer {{authToken}}
+
+### 10. Search Bookings by Date Range
+GET {{baseUrl}}/bookings?startDate=2025-07-01T00:00:00.000Z&endDate=2025-07-31T23:59:59.000Z
+Authorization: Bearer {{authToken}}
+
+### 11. Search Bookings by Vehicle
+GET {{baseUrl}}/bookings?vehicleId={{vehicleId}}
+Authorization: Bearer {{authToken}}
+
+### 12. Search Bookings by Location
+GET {{baseUrl}}/bookings?pickupLocation=New York
+Authorization: Bearer {{authToken}}
+
+### 13. Get Bookings by Status
+GET {{baseUrl}}/bookings?status=PENDING
+Authorization: Bearer {{authToken}}
+
+GET {{baseUrl}}/bookings?status=CONFIRMED
+Authorization: Bearer {{authToken}}
+
+GET {{baseUrl}}/bookings?status=CANCELLED
+Authorization: Bearer {{authToken}}
+
+GET {{baseUrl}}/bookings?status=COMPLETED
+Authorization: Bearer {{authToken}}
+
+### 14. Pagination Example
+GET {{baseUrl}}/bookings?page=1&limit=5
+Authorization: Bearer {{authToken}}
+
+### 15. Complex Search Example
+GET {{baseUrl}}/bookings?status=CONFIRMED&pickupLocation=New York&page=1&limit=10
+Authorization: Bearer {{authToken}}
+
+### Sample Booking Data for Testing:
+
+### Create Booking - Sedan
+POST {{baseUrl}}/bookings
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "vehicleId": "b9290c0e-c4e5-4741-bab8-c5f11b7c16e7",
+  "startDate": "2025-07-05T09:00:00.000Z",
+  "endDate": "2025-07-07T17:00:00.000Z",
+  "pickupLocation": "Los Angeles Airport",
+  "returnLocation": "Los Angeles Downtown",
+  "notes": "Business trip, need reliable transportation"
+}
+
+### Create Booking - SUV
+POST {{baseUrl}}/bookings
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "vehicleId": "c8f9d1a2-b3e4-5678-9abc-def012345678",
+  "startDate": "2025-07-10T08:00:00.000Z",
+  "endDate": "2025-07-12T16:00:00.000Z",
+  "pickupLocation": "Miami Beach Hotel",
+  "returnLocation": "Miami Airport",
+  "notes": "Family vacation, need space for luggage"
+}
+
+### Create Booking - Economy
+POST {{baseUrl}}/bookings
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "vehicleId": "d1e2f3a4-b5c6-7890-1234-567890abcdef",
+  "startDate": "2025-07-15T10:00:00.000Z",
+  "endDate": "2025-07-16T18:00:00.000Z",
+  "pickupLocation": "Chicago Downtown",
+  "returnLocation": "Chicago Downtown",
+  "notes": "Day trip, budget-friendly option"
+}
+
+### Booking Status Flow:
+# 1. PENDING - Initial status when booking is created
+# 2. CONFIRMED - Admin/Agent confirms the booking
+# 3. COMPLETED - Booking period has ended
+# 4. CANCELLED - Booking was cancelled by user or admin
+
+### Error Scenarios to Test:
+# - Try to book unavailable vehicle
+# - Try to book overlapping dates
+# - Try to modify completed/cancelled booking
+# - Try to access booking that doesn't belong to user
+# - Try to access without authentication 

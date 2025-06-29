@@ -1,0 +1,10 @@
+{
+  "development": {
+    "baseUrl": "http://localhost:3000",
+    "authToken": ""
+  },
+  "production": {
+    "baseUrl": "https://your-production-url.com",
+    "authToken": ""
+  }
+} 

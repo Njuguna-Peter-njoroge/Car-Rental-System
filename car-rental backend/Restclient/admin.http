@@ -1,0 +1,14 @@
+
+# Get dashboard stats
+GET http://localhost:3000/admin/dashboard
+Authorization: Bearer YOUR_ADMIN_TOKEN"
+
+
+# Get all bookings
+ GET http://localhost:3000/admin/bookings
+ Authorization: Bearer YOUR_ADMIN_TOKEN"
+
+
+# Get all locations
+GET http://localhost:3000/locations
+Authorization: Bearer YOUR_ADMIN_TOKEN"

@@ -1,0 +1,148 @@
+### Environment Variables
+@baseUrl = http://localhost:3000
+@authToken = Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI3YjRiNTJlNC1iNDRkLTQxMmUtYWNjZi1kNGEzZGQ3MmIwNWYiLCJlbWFpbCI6Im5qdWd1bmFocGV0ZXJuam9yb2dlQGdtYWlsLmNvbSIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc1MTIwNjE5NiwiZXhwIjoxNzUxMjkyNTk2fQ.v8ijMlaL0oDkqLMU5XNTusKA4lW49Sj-Ny7BWIiBqJQ
+
+### 1. Create a Vehicle (Admin/Agent only)
+POST {{baseUrl}}/vehicles
+Content-Type: application/json
+Authorization: {{authToken}}
+
+{
+  "model": "Toyota Corolla",
+  "year": 2022,
+  "licensePlate": "htgddvd",
+  "vin": "1HGCM82633A004352",
+  "category": "Sedan",
+  "transmission": "Automatic",
+  "fuelType": "Gasoline",
+  "seats": 5,
+  "dailyRate": 50,
+  "hourlyRate": 10,
+  "isAvailable": true,
+  "location": "New York",
+  "features": ["AC", "Bluetooth", "Backup Camera"],
+  "images": ["https://example.com/car1.jpg", "https://example.com/car2.jpg"],
+  "description": "A comfortable and reliable sedan perfect for daily commuting",
+  "mileage": 10000,
+  "status": "ACTIVE"
+}
+
+### 2. Get All Vehicles (Public)
+GET {{baseUrl}}/vehicles
+Authorization: {{authToken}}
+
+### 3. Get All Vehicles with Pagination
+GET {{baseUrl}}/vehicles?page=1&limit=10
+Authorization: {{authToken}}
+
+### 4. Get All Vehicles with Filters
+GET {{baseUrl}}/vehicles?category=Sedan&isAvailable=true&minDailyRate=30&maxDailyRate=100
+Authorization: {{authToken}}
+
+### 5. Get Vehicle by ID (Public)
+GET {{baseUrl}}/vehicles/{{vehicleId}}
+Authorization: {{authToken}}
+
+### 6. Search Vehicles (Public)
+GET {{baseUrl}}/vehicles/search?query=Toyota
+Authorization: {{authToken}}
+
+### 7. Search Vehicles with Advanced Filters
+GET {{baseUrl}}/vehicles/search?query=Corolla&category=Sedan&transmission=Automatic&fuelType=Gasoline&minSeats=4&maxSeats=7&minDailyRate=30&maxDailyRate=80&location=New York
+Authorization: {{authToken}}
+
+### 8. Get Available Vehicles (Public)
+GET {{baseUrl}}/vehicles/available
+Authorization: {{authToken}}
+
+### 9. Get Available Vehicles with Filters
+GET {{baseUrl}}/vehicles/available?category=Sedan&location=New York&minSeats=4
+Authorization: {{authToken}}
+
+### 10. Update Vehicle (Admin/Agent only)
+PATCH {{baseUrl}}/vehicles/cc389c78-7b29-4163-8659-cdd2271922d4
+Content-Type: application/json
+Authorization: {{authToken}}
+
+{
+  "dailyRate": 55,
+  "isAvailable": false,
+  "description": "Updated description - now with premium features",
+  "features": ["AC", "Bluetooth", "Backup Camera", "GPS Navigation"]
+}
+
+### 11. Delete Vehicle (Admin only)
+DELETE {{baseUrl}}/vehicles/cc389c78-7b29-4163-8659-cdd2271922d4
+Authorization: {{authToken}}
+
+### 12. Get Vehicle Reviews (Public)
+GET {{baseUrl}}/vehicles/{{vehicleId}}/reviews
+Authorization: {{authToken}}
+
+### 13. Create Vehicle Review (Authenticated users)
+POST {{baseUrl}}/vehicles/cc389c78-7b29-4163-8659-cdd2271922d4/reviews
+Content-Type: application/json
+Authorization: {{authToken}}
+
+{
+  "rating": 4,
+  "comment": "Great car, very comfortable and fuel efficient!"
+}
+
+### 14. Get Vehicle Statistics (Admin/Agent only)
+GET {{baseUrl}}/vehicles/stats
+Authorization: {{authToken}}
+
+### 15. Get Vehicle Statistics with Date Range
+GET {{baseUrl}}/vehicles/stats?startDate=2024-01-01&endDate=2024-12-31
+Authorization: {{authToken}}
+
+### 16. Bulk Update Vehicle Status (Admin only)
+PATCH {{baseUrl}}/vehicles/bulk-status
+Content-Type: application/json
+Authorization: {{authToken}}
+
+{
+  "vehicleIds": ["{{vehicleId}}"],
+  "status": "MAINTENANCE"
+}
+
+### 17. Get Vehicles by Category (Public)
+GET {{baseUrl}}/vehicles/category/Sedan
+Authorization: {{authToken}}
+
+### 18. Get Vehicles by Location (Public)
+GET {{baseUrl}}/vehicles/location/New York
+Authorization: {{authToken}}
+
+### 19. Get Vehicle Images (Public)
+GET {{baseUrl}}/vehicles/{{vehicleId}}/images
+Authorization: {{authToken}}
+
+### 20. Upload Vehicle Images (Admin/Agent only)
+POST {{baseUrl}}/vehicles/cc389c78-7b29-4163-8659-cdd2271922d4/images
+Content-Type: multipart/form-data
+Authorization: {{authToken}}
+
+### Authentication
+
+### Login to get token
+# @name login
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "admin@example.com",
+  "password": "Admin123!"
+}
+
+### Register new user
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+  "name": "Test User",
+  "email": "testuser@example.com",
+  "password": "Password123!",
+  "role": "CUSTOMER"
+}

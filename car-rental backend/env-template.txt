@@ -1,0 +1,37 @@
+# Copy this content to a new file named .env in the car-rental backend directory
+
+# Database
+DATABASE_URL="postgresql://username:password@localhost:5432/car_rental_db"
+
+# JWT
+JWT_SECRET="your-super-secret-jwt-key-here"
+JWT_REFRESH_SECRET="your-super-secret-refresh-key-here"
+
+# Email Configuration (Gmail)
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_SECURE=false
+SMTP_USER=your-email@gmail.com
+SMTP_PASS=your-app-password
+SMTP_FROM=your-email@gmail.com
+
+# Frontend URL
+FRONTEND_URL=http://localhost:3000
+
+# Server
+PORT=3000
+
+# Instructions for Gmail App Password:
+# 1. Go to your Google Account settings
+# 2. Enable 2-Factor Authentication
+# 3. Go to Security > App passwords
+# 4. Generate a new app password for "Mail"
+# 5. Use that password in SMTP_PASS
+
+# Alternative: Use Ethereal Email for testing (fake SMTP)
+# SMTP_HOST=smtp.ethereal.email
+# SMTP_PORT=587
+# SMTP_SECURE=false
+# SMTP_USER=your-ethereal-username
+# SMTP_PASS=your-ethereal-password
+# SMTP_FROM=noreply@example.com 

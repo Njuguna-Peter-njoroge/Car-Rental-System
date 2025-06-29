@@ -1,0 +1,124 @@
+### Vehicle API Testing - Simple Version
+### No environment variables needed
+
+### 1. Login to get auth token
+# @name login
+POST http://localhost:3000/auth/login
+Content-Type: application/json
+
+{
+  "email": "admin@example.com",
+  "password": "Admin123!"
+}
+
+### 2. Extract token from login response
+# @authToken = {{login.response.body.data.access_token}}
+
+### 3. Create a Vehicle (Admin/Agent only)
+POST http://localhost:3000/vehicles
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5YjkzYzkxMy05YmVmLTQzMWMtOTBmYy1lNmI5Zjc3YjNiMjUiLCJlbWFpbCI6ImFkbWluQGV4YW1wbGUuY29tIiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzUxMjA1MTY3LCJleHAiOjE3NTEyOTE1Njd9.BtLXGIMyyhcBtwfaRi2uEGkWZLCwqyYh81F2Uki-vAs
+
+{
+  "model": "Toyota Corolla",
+  "year": 2022,
+  "licensePlate": "ABC123",
+  "vin": "1HGCM82633A004352",
+  "category": "Sedan",
+  "transmission": "Automatic",
+  "fuelType": "Gasoline",
+  "seats": 5,
+  "dailyRate": 50,
+  "hourlyRate": 10,
+  "isAvailable": true,
+  "location": "New York",
+  "features": ["AC", "Bluetooth", "Backup Camera"],
+  "images": ["https://example.com/car1.jpg", "https://example.com/car2.jpg"],
+  "description": "A comfortable and reliable sedan perfect for daily commuting",
+  "mileage": 10000,
+  "status": "ACTIVE"
+}
+
+### 4. Get All Vehicles (Public)
+GET http://localhost:3000/vehicles
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5YjkzYzkxMy05YmVmLTQzMWMtOTBmYy1lNmI5Zjc3YjNiMjUiLCJlbWFpbCI6ImFkbWluQGV4YW1wbGUuY29tIiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzUxMjA1MTY3LCJleHAiOjE3NTEyOTE1Njd9.BtLXGIMyyhcBtwfaRi2uEGkWZLCwqyYh81F2Uki-vAs
+
+
+### 5. Get All Vehicles with Pagination
+GET http://localhost:3000/vehicles?page=1&limit=10
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5YjkzYzkxMy05YmVmLTQzMWMtOTBmYy1lNmI5Zjc3YjNiMjUiLCJlbWFpbCI6ImFkbWluQGV4YW1wbGUuY29tIiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzUxMjA1MTY3LCJleHAiOjE3NTEyOTE1Njd9.BtLXGIMyyhcBtwfaRi2uEGkWZLCwqyYh81F2Uki-vAs
+
+
+### 6. Get All Vehicles with Filters
+GET http://localhost:3000/vehicles?category=Sedan&isAvailable=true&minDailyRate=30&maxDailyRate=100
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5YjkzYzkxMy05YmVmLTQzMWMtOTBmYy1lNmI5Zjc3YjNiMjUiLCJlbWFpbCI6ImFkbWluQGV4YW1wbGUuY29tIiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzUxMjA1MTY3LCJleHAiOjE3NTEyOTE1Njd9.BtLXGIMyyhcBtwfaRi2uEGkWZLCwqyYh81F2Uki-vAs
+
+
+### 7. Get Vehicle by ID (Public)
+GET http://localhost:3000/vehicles/b9290c0e-c4e5-4741-bab8-c5f11b7c16e7
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5YjkzYzkxMy05YmVmLTQzMWMtOTBmYy1lNmI5Zjc3YjNiMjUiLCJlbWFpbCI6ImFkbWluQGV4YW1wbGUuY29tIiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzUxMjA1MTY3LCJleHAiOjE3NTEyOTE1Njd9.BtLXGIMyyhcBtwfaRi2uEGkWZLCwqyYh81F2Uki-vAs
+
+
+### 8. Search Vehicles (Public)
+GET http://localhost:3000/vehicles/search?query=Toyota
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5YjkzYzkxMy05YmVmLTQzMWMtOTBmYy1lNmI5Zjc3YjNiMjUiLCJlbWFpbCI6ImFkbWluQGV4YW1wbGUuY29tIiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzUxMjA1MTY3LCJleHAiOjE3NTEyOTE1Njd9.BtLXGIMyyhcBtwfaRi2uEGkWZLCwqyYh81F2Uki-vAs
+
+
+### 9. Get Available Vehicles (Public)
+GET http://localhost:3000/vehicles/available
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5YjkzYzkxMy05YmVmLTQzMWMtOTBmYy1lNmI5Zjc3YjNiMjUiLCJlbWFpbCI6ImFkbWluQGV4YW1wbGUuY29tIiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzUxMjA1MTY3LCJleHAiOjE3NTEyOTE1Njd9.BtLXGIMyyhcBtwfaRi2uEGkWZLCwqyYh81F2Uki-vAs
+
+
+### 10. Update Vehicle (Admin/Agent only)
+PATCH http://localhost:3000/vehicles/b9290c0e-c4e5-4741-bab8-c5f11b7c16e7
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5YjkzYzkxMy05YmVmLTQzMWMtOTBmYy1lNmI5Zjc3YjNiMjUiLCJlbWFpbCI6ImFkbWluQGV4YW1wbGUuY29tIiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzUxMjA1MTY3LCJleHAiOjE3NTEyOTE1Njd9.BtLXGIMyyhcBtwfaRi2uEGkWZLCwqyYh81F2Uki-vAs
+
+{
+  "dailyRate": 55,
+  "isAvailable": false,
+  "description": "Updated description - now with premium features",
+  "features": ["AC", "Bluetooth", "Backup Camera", "GPS Navigation"]
+}
+
+### 11. Delete Vehicle (Admin only)
+DELETE http://localhost:3000/vehicles/b9290c0e-c4e5-4741-bab8-c5f11b7c16e7
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5YjkzYzkxMy05YmVmLTQzMWMtOTBmYy1lNmI5Zjc3YjNiMjUiLCJlbWFpbCI6ImFkbWluQGV4YW1wbGUuY29tIiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzUxMjA1MTY3LCJleHAiOjE3NTEyOTE1Njd9.BtLXGIMyyhcBtwfaRi2uEGkWZLCwqyYh81F2Uki-vAs
+
+### 12. Get Vehicle Reviews (Public)
+GET http://localhost:3000/vehicles/b9290c0e-c4e5-4741-bab8-c5f11b7c16e7/reviews
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5YjkzYzkxMy05YmVmLTQzMWMtOTBmYy1lNmI5Zjc3YjNiMjUiLCJlbWFpbCI6ImFkbWluQGV4YW1wbGUuY29tIiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzUxMjA1MTY3LCJleHAiOjE3NTEyOTE1Njd9.BtLXGIMyyhcBtwfaRi2uEGkWZLCwqyYh81F2Uki-vAs
+
+
+### 13. Create Vehicle Review (Authenticated users)
+POST http://localhost:3000/vehicles/b9290c0e-c4e5-4741-bab8-c5f11b7c16e7/reviews
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5YjkzYzkxMy05YmVmLTQzMWMtOTBmYy1lNmI5Zjc3YjNiMjUiLCJlbWFpbCI6ImFkbWluQGV4YW1wbGUuY29tIiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzUxMjA1MTY3LCJleHAiOjE3NTEyOTE1Njd9.BtLXGIMyyhcBtwfaRi2uEGkWZLCwqyYh81F2Uki-vAs
+
+{
+  "rating": 4,
+  "comment": "Great car, very comfortable and fuel efficient!"
+}
+
+### 14. Get Vehicle Statistics (Admin/Agent only)
+GET http://localhost:3000/vehicles/stats
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5YjkzYzkxMy05YmVmLTQzMWMtOTBmYy1lNmI5Zjc3YjNiMjUiLCJlbWFpbCI6ImFkbWluQGV4YW1wbGUuY29tIiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzUxMjA1MTY3LCJleHAiOjE3NTEyOTE1Njd9.BtLXGIMyyhcBtwfaRi2uEGkWZLCwqyYh81F2Uki-vAs
+
+### 15. Register new user
+POST http://localhost:3000/auth/register
+Content-Type: application/json
+
+{
+  "name": "Test User",
+  "email": "testuser@example.com",
+  "password": "Test123!",
+  "role": "CUSTOMER"
+}
+
+### Notes:
+### - Replace {{vehicleId}} with actual vehicle ID from responses
+### - Run the login request first to get the auth token
+### - Then run the token extraction line
+### - After that, you can run any of the vehicle endpoints
+### - Some endpoints require specific permissions (ADMIN, AGENT, CUSTOMER)
+### - Public endpoints don't require authentication 

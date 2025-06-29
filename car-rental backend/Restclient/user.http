@@ -1,0 +1,78 @@
+### 1. Register admin
+POST http://localhost:3000/auth/register
+Content-Type: application/json
+
+{
+  "name": "Peter Njoroge",
+  "email": "njugunahpeternjoroge@gmail.com",
+  "password": "Admin123!",
+  "role": "ADMIN"
+}
+
+### 2. Login and get token
+POST http://localhost:3000/auth/login
+Content-Type: application/json
+
+{
+  "email": "njugunahpeternjoroge@gmail.com",
+  "password": "Admin123!"
+}
+
+### 3. Test protected endpoint (replace TOKEN with actual token from login)
+GET http://localhost:3000/users/profile
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhZmQxN2RjYi01ZWZmLTRiMjEtYjBlMS02ZGZmYjM0NWFhZDMiLCJlbWFpbCI6Im5qdWd1bmFocGV0ZXJuam9yb2dlQGdtYWlsLmNvbSIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc1MTE3NTAxMiwiZXhwIjoxNzUxMjYxNDEyfQ.J4h0cI2PfhZrPz-IWimVM9xFq0wKYojRFbWf9ff3BH0
+Content-Type: application/json
+
+### 4. Update profile - Add phone number
+PATCH http://localhost:3000/users/profile
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhZmQxN2RjYi01ZWZmLTRiMjEtYjBlMS02ZGZmYjM0NWFhZDMiLCJlbWFpbCI6Im5qdWd1bmFocGV0ZXJuam9yb2dlQGdtYWlsLmNvbSIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc1MTE3NTAxMiwiZXhwIjoxNzUxMjYxNDEyfQ.J4h0cI2PfhZrPz-IWimVM9xFq0wKYojRFbWf9ff3BH0
+Content-Type: application/json
+
+{
+  "phone": "+254712345678",
+  "profileImage": "https://example.com/profile.jpg"
+}
+
+### 5. Update profile - Change name
+PATCH http://localhost:3000/users/profile
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhZmQxN2RjYi01ZWZmLTRiMjEtYjBlMS02ZGZmYjM0NWFhZDMiLCJlbWFpbCI6Im5qdWd1bmFocGV0ZXJuam9yb2dlQGdtYWlsLmNvbSIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc1MTE3NTAxMiwiZXhwIjoxNzUxMjYxNDEyfQ.J4h0cI2PfhZrPz-IWimVM9xFq0wKYojRFbWf9ff3BH0
+Content-Type: application/json
+
+{
+  "name": "Peter Njoroge Updated"
+}
+
+### 6. Register a new customer (Public)
+POST http://localhost:3000/auth/register
+Content-Type: application/json
+
+{
+  "name": "John Customer",
+  "email": "alexmucheke49@gmail.com",
+  "password": "CustomerPass123!",
+  "role": "CUSTOMER"
+}
+
+### 7. Admin creates customer (Protected - Admin Only)
+POST http://localhost:3000/users
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhZmQxN2RjYi01ZWZmLTRiMjEtYjBlMS02ZGZmYjM0NWFhZDMiLCJlbWFpbCI6Im5qdWd1bmFocGV0ZXJuam9yb2dlQGdtYWlsLmNvbSIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc1MTE3NTAxMiwiZXhwIjoxNzUxMjYxNDEyfQ.J4h0cI2PfhZrPz-IWimVM9xFq0wKYojRFbWf9ff3BH0
+Content-Type: application/json
+
+{
+  "name": "Alex Customer",
+  "email": "peterjuniordevops@gmail.com",
+  "password": "CustomerPass123!",
+  "role": "CUSTOMER"
+}
+
+### 8 get alll users
+GET http://localhost:3000/users
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhZmQxN2RjYi01ZWZmLTRiMjEtYjBlMS02ZGZmYjM0NWFhZDMiLCJlbWFpbCI6Im5qdWd1bmFocGV0ZXJuam9yb2dlQGdtYWlsLmNvbSIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc1MTE3NTAxMiwiZXhwIjoxNzUxMjYxNDEyfQ.J4h0cI2PfhZrPz-IWimVM9xFq0wKYojRFbWf9ff3BH0
+
+### 9 get one user
+GET http://localhost:3000/users/afd17dcb-5eff-4b21-b0e1-6dffb345aad3
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhZmQxN2RjYi01ZWZmLTRiMjEtYjBlMS02ZGZmYjM0NWFhZDMiLCJlbWFpbCI6Im5qdWd1bmFocGV0ZXJuam9yb2dlQGdtYWlsLmNvbSIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc1MTE3NTAxMiwiZXhwIjoxNzUxMjYxNDEyfQ.J4h0cI2PfhZrPz-IWimVM9xFq0wKYojRFbWf9ff3BH0
+
+### delete user
+DELETE http://localhost:3000/users/c009d8bd-131a-47ba-b7c7-7c05f7c9c0c3
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhZmQxN2RjYi01ZWZmLTRiMjEtYjBlMS02ZGZmYjM0NWFhZDMiLCJlbWFpbCI6Im5qdWd1bmFocGV0ZXJuam9yb2dlQGdtYWlsLmNvbSIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc1MTE3NTAxMiwiZXhwIjoxNzUxMjYxNDEyfQ.J4h0cI2PfhZrPz-IWimVM9xFq0wKYojRFbWf9ff3BH0
