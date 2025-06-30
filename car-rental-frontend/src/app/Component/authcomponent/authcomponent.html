@@ -1,0 +1,219 @@
+<div class="flexin">
+  <div class="tabs tabs-style-flip">
+    <nav>
+      <ul>
+        <li [class.tab-current]="activeTab === 'login'">
+          <a (click)="switchTab('login')" style="cursor: pointer;">
+            <span><i class="fa fa-lock"></i> Login</span>
+          </a>
+        </li>
+        <li [class.tab-current]="activeTab === 'signup'">
+          <a (click)="switchTab('signup')" style="cursor: pointer;">
+            <span><i class="fa fa-user-plus"></i> Sign Up</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+
+    <div class="content-wrap">
+      <!-- Login Section -->
+      <section id="section-flip-1" [class.content-current]="activeTab === 'login'">
+        <form [formGroup]="loginForm" (ngSubmit)="onLogin()" class="ui large form">
+          <div class="ui segment">
+            <h2 class="ui header">Log-In to Your Account</h2>
+
+            <div class="field">
+              <div class="ui left icon input" [class.error]="isFieldInvalid(loginForm, 'email')">
+                <i class="user icon"></i>
+                <input
+                  type="email"
+                  formControlName="email"
+                  placeholder="E-mail address"
+                  [class.error]="isFieldInvalid(loginForm, 'email')">
+              </div>
+              <div class="ui red pointing label" *ngIf="getFieldError(loginForm, 'email')">
+                {{ getFieldError(loginForm, 'email') }}
+              </div>
+            </div>
+
+            <div class="field">
+              <div class="ui left icon input" [class.error]="isFieldInvalid(loginForm, 'password')">
+                <i class="lock icon"></i>
+                <input
+                  type="password"
+                  formControlName="password"
+                  placeholder="Password"
+                  [class.error]="isFieldInvalid(loginForm, 'password')">
+              </div>
+              <div class="ui red pointing label" *ngIf="getFieldError(loginForm, 'password')">
+                {{ getFieldError(loginForm, 'password') }}
+              </div>
+            </div>
+
+            <div class="field">
+              <a (click)="showForgotPasswordForm()" style="cursor: pointer; color: #007bff;">
+                Forgot Password?
+              </a>
+            </div>
+
+            <button
+              type="submit"
+              class="ui fluid large orange submit button"
+              [disabled]="isLoading || !loginForm.valid">
+              <span *ngIf="!isLoading">LOGIN</span>
+              <span *ngIf="isLoading">Logging in...</span>
+            </button>
+          </div>
+        </form>
+
+        <div class="ui message">
+          Don't have an account yet?
+          <a (click)="switchTab('signup')" style="cursor: pointer;">SIGN UP</a>
+        </div>
+      </section>
+
+      <!-- Signup Section -->
+      <section id="section-flip-2" [class.content-current]="activeTab === 'signup'">
+        <form [formGroup]="signupForm" (ngSubmit)="onSignup()" class="ui large form">
+          <div class="ui segment">
+            <h2 class="ui header">Sign up for an Account</h2>
+
+            <div class="field">
+              <div class="ui left icon input" [class.error]="isFieldInvalid(signupForm, 'name')">
+                <i class="user icon"></i>
+                <input
+                  type="text"
+                  formControlName="name"
+                  placeholder="Full Name"
+                  [class.error]="isFieldInvalid(signupForm, 'name')">
+              </div>
+              <div class="ui red pointing label" *ngIf="getFieldError(signupForm, 'name')">
+                {{ getFieldError(signupForm, 'name') }}
+              </div>
+            </div>
+
+            <div class="field">
+              <div class="ui left icon input" [class.error]="isFieldInvalid(signupForm, 'email')">
+                <i class="envelope icon"></i>
+                <input
+                  type="email"
+                  formControlName="email"
+                  placeholder="E-mail address"
+                  [class.error]="isFieldInvalid(signupForm, 'email')">
+              </div>
+              <div class="ui red pointing label" *ngIf="getFieldError(signupForm, 'email')">
+                {{ getFieldError(signupForm, 'email') }}
+              </div>
+            </div>
+
+            <div class="field">
+              <div class="ui left icon input" [class.error]="isFieldInvalid(signupForm, 'phone')">
+                <i class="phone icon"></i>
+                <input
+                  type="tel"
+                  formControlName="phone"
+                  placeholder="Phone Number"
+                  [class.error]="isFieldInvalid(signupForm, 'phone')">
+              </div>
+              <div class="ui red pointing label" *ngIf="getFieldError(signupForm, 'phone')">
+                {{ getFieldError(signupForm, 'phone') }}
+              </div>
+            </div>
+
+            <div class="field">
+              <div class="ui left icon input" [class.error]="isFieldInvalid(signupForm, 'password')">
+                <i class="lock icon"></i>
+                <input
+                  type="password"
+                  formControlName="password"
+                  placeholder="Choose a Password"
+                  [class.error]="isFieldInvalid(signupForm, 'password')">
+              </div>
+              <div class="ui red pointing label" *ngIf="getFieldError(signupForm, 'password')">
+                {{ getFieldError(signupForm, 'password') }}
+              </div>
+            </div>
+
+            <div class="field">
+              <div class="ui left icon input" [class.error]="isFieldInvalid(signupForm, 'confirmPassword')">
+                <i class="lock icon"></i>
+                <input
+                  type="password"
+                  formControlName="confirmPassword"
+                  placeholder="Confirm Password"
+                  [class.error]="isFieldInvalid(signupForm, 'confirmPassword')">
+              </div>
+              <div class="ui red pointing label" *ngIf="getFieldError(signupForm, 'confirmPassword')">
+                {{ getFieldError(signupForm, 'confirmPassword') }}
+              </div>
+              <div class="ui red pointing label" *ngIf="signupForm.errors?.['passwordMismatch'] && signupForm.get('confirmPassword')?.touched">
+                Passwords do not match
+              </div>
+            </div>
+
+            <button
+              type="submit"
+              class="ui fluid large teal submit button"
+              [disabled]="isLoading || !signupForm.valid">
+              <span *ngIf="!isLoading">REGISTER</span>
+              <span *ngIf="isLoading">Creating account...</span>
+            </button>
+          </div>
+        </form>
+
+        <div class="ui message">
+          Already have an account?
+          <a (click)="switchTab('login')" style="cursor: pointer;">LOG IN</a>
+        </div>
+      </section>
+    </div>
+  </div>
+</div>
+
+<!-- Forgot Password Modal -->
+<div class="ui modal" [class.active]="showForgotPassword">
+  <div class="header">
+    Forgot Password
+  </div>
+  <div class="content">
+    <form [formGroup]="forgotPasswordForm" (ngSubmit)="onForgotPassword()" class="ui form">
+      <div class="field">
+        <label>Email Address</label>
+        <div class="ui left icon input" [class.error]="isFieldInvalid(forgotPasswordForm, 'email')">
+          <i class="envelope icon"></i>
+          <input
+            type="email"
+            formControlName="email"
+            placeholder="Enter your email address"
+            [class.error]="isFieldInvalid(forgotPasswordForm, 'email')">
+        </div>
+        <div class="ui red pointing label" *ngIf="getFieldError(forgotPasswordForm, 'email')">
+          {{ getFieldError(forgotPasswordForm, 'email') }}
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="actions">
+    <div class="ui button" (click)="hideForgotPasswordForm()">Cancel</div>
+    <button
+      class="ui primary button"
+      (click)="onForgotPassword()"
+      [disabled]="isLoading || !forgotPasswordForm.valid">
+      <span *ngIf="!isLoading">Send Reset Email</span>
+      <span *ngIf="isLoading">Sending...</span>
+    </button>
+  </div>
+</div>
+
+<!-- Error/Success Messages -->
+<div class="ui error message" *ngIf="errorMessage">
+  <i class="close icon" (click)="errorMessage = ''"></i>
+  <div class="header">Error</div>
+  <p>{{ errorMessage }}</p>
+</div>
+
+<div class="ui success message" *ngIf="successMessage">
+  <i class="close icon" (click)="successMessage = ''"></i>
+  <div class="header">Success</div>
+  <p>{{ successMessage }}</p>
+</div>
