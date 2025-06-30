@@ -106,6 +106,16 @@
               </div>
             </div>
 
+            <!-- Country Dropdown with Flags -->
+            <div class="field">
+              <label for="country">Country</label>
+              <select id="country" formControlName="country" (change)="onCountryChange($event)" class="country-dropdown">
+                <option *ngFor="let c of countries" [value]="c.code">
+                  {{ c.flag }} {{ c.name }} ({{ c.dial_code }})
+                </option>
+              </select>
+            </div>
+
             <div class="field">
               <div class="ui left icon input" [class.error]="isFieldInvalid(signupForm, 'phone')">
                 <i class="phone icon"></i>

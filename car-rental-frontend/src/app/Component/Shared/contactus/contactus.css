@@ -1,0 +1,274 @@
+/* car-rental-contact.component.css */
+.rental-container {
+  display: flex;
+  gap: 30px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 30px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.rental-form {
+  flex: 1;
+  background: #ffffff;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.rental-info {
+  flex: 1;
+  background: #f8f9fa;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+}
+
+h2, h3, h4 {
+  color: #2c3e50;
+  margin-bottom: 20px;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-row {
+  display: flex;
+  gap: 20px;
+}
+
+.form-row .form-group {
+  flex: 1;
+}
+
+label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #495057;
+}
+
+input, select, textarea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  font-size: 16px;
+  transition: border-color 0.3s;
+}
+
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  border-color: #3498db;
+}
+
+textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+.error-message {
+  color: #e74c3c;
+  font-size: 14px;
+  margin-top: 5px;
+}
+
+.submit-btn {
+  background-color: #3498db;
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 600;
+  transition: background-color 0.3s;
+  width: 100%;
+}
+
+.submit-btn:hover {
+  background-color: #2980b9;
+}
+
+.submit-btn:disabled {
+  background-color: #95a5a6;
+  cursor: not-allowed;
+}
+
+.phone-input {
+  width: 100% !important;
+}
+
+.info-card {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.info-icon {
+  font-size: 32px;
+  margin-bottom: 10px;
+}
+
+.contact-details {
+  margin-top: 30px;
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.detail-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.detail-item .icon {
+  margin-right: 15px;
+  font-size: 20px;
+}
+
+/* Responsive layout */
+@media (max-width: 768px) {
+  .rental-container {
+    flex-direction: column;
+    padding: 15px;
+  }
+
+  .form-row {
+    flex-direction: column;
+    gap: 0;
+  }
+}
+
+.form-group.phone-group {
+  margin-bottom: 20px;
+}
+
+.phone-input-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #f4f6fa;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  padding: 8px 12px;
+}
+
+.country-flag {
+  font-size: 1.5rem;
+  margin-right: 4px;
+}
+
+.country-dial {
+  font-weight: 600;
+  color: #2c3e50;
+  margin-right: 8px;
+}
+
+select#country {
+  width: 100%;
+  padding: 10px;
+  border-radius: 4px;
+  border: 1px solid #ced4da;
+  font-size: 16px;
+  background: #f4f6fa;
+  margin-bottom: 0;
+}
+
+select#country:focus {
+  outline: none;
+  border-color: #3498db;
+}
+
+.form-group textarea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  font-size: 16px;
+  transition: border-color 0.3s;
+  min-height: 100px;
+  resize: vertical;
+  background: #f4f6fa;
+}
+
+.form-group textarea:focus {
+  outline: none;
+  border-color: #3498db;
+}
+
+.form-group label {
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+.form-container {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 24px rgba(44, 62, 80, 0.08);
+  padding: 40px 30px;
+  max-width: 700px;
+  margin: 40px auto;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.contact-form {
+  width: 100%;
+}
+
+@media (max-width: 768px) {
+  .form-container {
+    padding: 20px 8px;
+  }
+}
+
+.form-info {
+  margin-top: 40px;
+  padding: 24px 20px;
+  background: #f4f6fa;
+  border-radius: 10px;
+  box-shadow: 0 2px 12px rgba(44, 62, 80, 0.06);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 18px;
+}
+
+.info-details {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.info-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 1.1rem;
+  color: #2c3e50;
+  background: #fff;
+  padding: 10px 14px;
+  border-radius: 6px;
+  box-shadow: 0 1px 4px rgba(44, 62, 80, 0.04);
+}
+
+.info-item .icon {
+  font-size: 1.3rem;
+  color: #3498db;
+  margin-right: 8px;
+}
+
+@media (max-width: 768px) {
+  .form-info {
+    padding: 16px 6px;
+    margin-top: 24px;
+  }
+}

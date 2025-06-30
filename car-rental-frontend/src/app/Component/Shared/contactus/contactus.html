@@ -1,0 +1,72 @@
+<!-- contact-form.component.html -->
+<div class="form-container">
+  <form [formGroup]="contactForm" (ngSubmit)="onSubmit()" class="contact-form">
+    <h2>Contact Us</h2>
+
+    <div class="form-group">
+      <label for="name">Full Name</label>
+      <input type="text" id="name" formControlName="name" placeholder="Enter your name">
+      <div *ngIf="contactForm.get('name')?.invalid && contactForm.get('name')?.touched" class="error-message">
+        Please enter a valid name (min 2 characters)
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="email">Email Address</label>
+      <input type="email" id="email" formControlName="email" placeholder="Enter your email">
+      <div *ngIf="contactForm.get('email')?.invalid && contactForm.get('email')?.touched" class="error-message">
+        Please enter a valid email address
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="country">Country</label>
+      <select id="country" formControlName="country" (change)="onCountryChange($event)">
+        <option *ngFor="let country of countries" [ngValue]="country">
+          {{ country.flag }} {{ country.name }} ({{ country.dial }})
+        </option>
+      </select>
+    </div>
+
+    <div class="form-group phone-group">
+      <label for="phone">Phone Number</label>
+      <div class="phone-input-wrapper">
+        <span class="country-flag">{{ contactForm.value.country?.flag }}</span>
+        <span class="country-dial">{{ contactForm.value.country?.dial }}</span>
+        <input type="tel" id="phone" formControlName="phone" placeholder="Enter phone number (no leading 0)">
+      </div>
+      <div *ngIf="contactForm.get('phone')?.invalid && contactForm.get('phone')?.touched" class="error-message">
+        Please enter a valid phone number (7-15 digits)
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="message">Your Message</label>
+      <textarea id="message" formControlName="message" placeholder="Enter your message here..."></textarea>
+      <div *ngIf="contactForm.get('message')?.invalid && contactForm.get('message')?.touched" class="error-message">
+        Please enter a message (min 10 characters)
+      </div>
+    </div>
+
+    <button type="submit" [disabled]="contactForm.invalid" class="submit-btn">Send Message</button>
+  </form>
+
+  <div class="form-info">
+    <h3>We'd love to hear from you!</h3>
+    <p>Our team is here to answer any questions you may have. Whether you're interested in our services, have feedback, or just want to say hello, we're happy to help.</p>
+    <div class="info-details">
+      <div class="info-item">
+        <i class="icon">📧</i>
+        <span>support&#64;example.com</span>
+      </div>
+      <div class="info-item">
+        <i class="icon">📱</i>
+        <span>+1 (555) 123-4567</span>
+      </div>
+      <div class="info-item">
+        <i class="icon">🏢</i>
+        <span>123 Business Ave, Suite 100<br>New York, NY 10001</span>
+      </div>
+    </div>
+  </div>
+</div>

@@ -120,7 +120,8 @@ export class AuthService {
         },
       });
 
-      // await this.mailerService.sendWelcomeEmail(user.email, user.name);
+      // Send welcome email
+      await this.mailerService.sendWelcomeEmail(user.email, user.name);
 
       return {
         success: true,
@@ -149,8 +150,12 @@ export class AuthService {
       };
     }
 
-    // For now, just return success message
-    // Password reset functionality can be implemented when the database schema is updated
+    // Generate a reset token (for demo, use randomBytes; in production, store in DB with expiry)
+    const resetToken = randomBytes(32).toString('hex');
+    // TODO: Store resetToken in DB with expiry and associate with user
+
+    await this.mailerService.sendPasswordResetEmail(user.email, user.name, resetToken);
+
     return {
       success: true,
       message:

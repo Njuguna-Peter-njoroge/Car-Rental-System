@@ -398,3 +398,39 @@
 .content-wrap::-webkit-scrollbar-thumb:hover {
   background: #a8a8a8;
 }
+
+/* Country Dropdown Styling */
+.country-dropdown {
+  width: 100%;
+  padding: 12px 10px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 1rem;
+  background: #f8f9fa;
+  margin-bottom: 10px;
+  appearance: none;
+  outline: none;
+  transition: border 0.2s;
+}
+
+.country-dropdown:focus {
+  border-color: #007bff;
+  background: #fff;
+}
+
+.country-dropdown option {
+  font-size: 1rem;
+}
+
+/* Phone input with dial code */
+.ui.left.icon.input input[type='tel'] {
+  padding-left: 48px;
+}
+
+/* Responsive for mobile */
+@media (max-width: 600px) {
+  .country-dropdown {
+    font-size: 0.95rem;
+    padding: 10px 6px;
+  }
+}
