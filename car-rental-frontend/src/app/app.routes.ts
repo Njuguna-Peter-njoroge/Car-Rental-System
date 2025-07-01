@@ -3,6 +3,7 @@ import { AuthComponent } from './Component/authcomponent/authcomponent';
 import { LandingPage } from './Component/landing-page/landing-page';
 import { UsersComponent } from "./Users/carspage/carspage";
 import { AdminDashboardComponent } from './Admin/admin-dashboard/admin-dashboard';
+import {BookingComponent} from './Component/car-booking/car-booking';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/home', pathMatch: 'full' },
@@ -17,6 +18,7 @@ export const routes: Routes = [
   { path: 'bookings', component: LandingPage },
   { path: 'admin', component: AdminDashboardComponent },
   { path: 'auth', component: AuthComponent },
+  {path:'booking', component: BookingComponent},
   { path: 'login', redirectTo: '/auth', pathMatch: 'full' },
   { path: 'register', redirectTo: '/auth', pathMatch: 'full' },
   { path: 'users/cars', component: UsersComponent },

@@ -1,4 +1,30 @@
 <app-navbar></app-navbar>
-<div>
+<div class="booking-container">
+  <h2>Book a Car</h2>
 
+  <form (ngSubmit)="submitBooking()" #bookingForm="ngForm">
+    <mat-form-field appearance="fill">
+      <mat-label>Full Name</mat-label>
+      <input matInput name="fullName" [(ngModel)]="booking.fullName" required />
+    </mat-form-field>
+
+    <mat-form-field appearance="fill">
+      <mat-label>Email</mat-label>
+      <input matInput type="email" name="email" [(ngModel)]="booking.email" required />
+    </mat-form-field>
+
+    <mat-form-field appearance="fill">
+      <mat-label>Booking Date</mat-label>
+      <input matInput [matDatepicker]="picker" name="bookingDate" [(ngModel)]="booking.bookingDate" required />
+      <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+      <mat-datepicker #picker></mat-datepicker>
+    </mat-form-field>
+
+    <mat-form-field appearance="fill">
+      <mat-label>Car Model</mat-label>
+      <input matInput name="carModel" [(ngModel)]="booking.carModel" required />
+    </mat-form-field>
+
+    <button mat-raised-button color="primary" type="submit" [disabled]="!bookingForm.valid">Submit Booking</button>
+  </form>
 </div>
