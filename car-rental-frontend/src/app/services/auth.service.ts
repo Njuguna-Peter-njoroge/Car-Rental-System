@@ -78,20 +78,20 @@ export class AuthService {
   }
 
   login(credentials: LoginRequest): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`${this.apiUrl}/auth/login`, credentials)
+    return this.http.post<any>(`${this.apiUrl}/auth/login`, credentials)
       .pipe(
         tap(response => {
-          this.setSession(response);
+          this.setSession(response.data);
         }),
         catchError(this.handleError)
       );
   }
 
   register(userData: RegisterRequest): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`${this.apiUrl}/auth/register`, userData)
+    return this.http.post<any>(`${this.apiUrl}/auth/register`, userData)
       .pipe(
         tap(response => {
-          this.setSession(response);
+          this.setSession(response.data);
         }),
         catchError(this.handleError)
       );
@@ -186,11 +186,11 @@ export class AuthService {
     return user?.isEmailVerified || false;
   }
 
-  private setSession(response: AuthResponse): void {
-    localStorage.setItem('currentUser', JSON.stringify(response.user));
-    localStorage.setItem('accessToken', response.accessToken);
-    localStorage.setItem('refreshToken', response.refreshToken);
-    this.currentUserSubject.next(response.user);
+  private setSession(data: any): void {
+    localStorage.setItem('currentUser', JSON.stringify(data.user));
+    localStorage.setItem('accessToken', data.access_token);
+    localStorage.setItem('refreshToken', data.refresh_token);
+    this.currentUserSubject.next(data.user);
     this.isAuthenticatedSubject.next(true);
   }
 

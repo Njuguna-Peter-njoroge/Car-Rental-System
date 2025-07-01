@@ -92,11 +92,11 @@ export class AuthComponent implements OnInit {
       };
 
       this.authService.login(loginData).subscribe({
-        next: (response) => {
+        next: (response: any) => {
           this.isLoading = false;
           this.successMessage = 'Login successful! Redirecting...';
           setTimeout(() => {
-            const user = response.user;
+            const user = response.data?.user;
             console.log('Logged in user:', user);
             console.log('User role:', user?.role);
             if (user && user.role && user.role.toLowerCase() === 'admin') {
