@@ -13,7 +13,7 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { ApiTags, ApiConsumes, ApiBody, ApiOperation, ApiResponse } from '@nestjs/swagger';
-import { CloudinaryService, HotelUploadType } from '../../Shared/Utils/Cloudinary/cloudinary.service';
+import { CloudinaryService, CarRentalUploadType } from '../../Shared/Utils/Cloudinary/cloudinary.service';
 import { JwtAuthGuard } from '../auth/Guards/jwt/jwt-auth.guard/jwt-auth.guard';
 import { RolesGuard } from '../auth/Guards/roles.guard';
 import { RequireRoles } from '../auth/decorators/roles.decorators';
@@ -67,7 +67,7 @@ export class UploadController {
     try {
       const result = await this.cloudinaryService.uploadFile(
         file,
-        HotelUploadType.DOCUMENT,
+        CarRentalUploadType.DOCUMENT,
         {
           entityType: 'test',
           tags: ['test-upload'],
@@ -173,7 +173,7 @@ export class UploadController {
     try {
       const results = await this.cloudinaryService.uploadMultipleFiles(
         files,
-        HotelUploadType.ROOM_IMAGE, // Using room image config for vehicles
+        CarRentalUploadType.VEHICLE_IMAGE, // Using vehicle image config
         {
           entityId: vehicleId,
           entityType: 'vehicle',
@@ -225,17 +225,17 @@ export class UploadController {
       throw new BadRequestException('No document file provided');
     }
 
-    let uploadType: HotelUploadType;
+    let uploadType: CarRentalUploadType;
     switch (documentType) {
       case 'booking':
-        uploadType = HotelUploadType.BOOKING_DOCUMENT;
+        uploadType = CarRentalUploadType.BOOKING_DOCUMENT;
         break;
       case 'id':
-        uploadType = HotelUploadType.ID_DOCUMENT;
+        uploadType = CarRentalUploadType.ID_DOCUMENT;
         break;
       case 'general':
       default:
-        uploadType = HotelUploadType.DOCUMENT;
+        uploadType = CarRentalUploadType.DOCUMENT;
         break;
     }
 
@@ -290,7 +290,7 @@ export class UploadController {
     try {
       const results = await this.cloudinaryService.uploadMultipleFiles(
         files,
-        HotelUploadType.GALLERY,
+        CarRentalUploadType.GALLERY,
         {
           entityType: 'gallery',
           tags: ['gallery'],

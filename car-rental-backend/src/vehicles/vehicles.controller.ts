@@ -62,9 +62,7 @@ export class VehiclesController {
   }
 
   @Get()
-  @UseGuards(JwtAuthGuard, PermissionsGuard)
-  @RequirePermissions(Permission.LIST_VEHICLES)
-  @ApiOperation({ summary: 'Get all vehicles with filtering and pagination' })
+  @ApiOperation({ summary: 'Get all vehicles with filtering and pagination (Public)' })
   @ApiResponse({ status: 200, description: 'Vehicles retrieved successfully' })
   @ApiQuery({
     name: 'category',
@@ -301,5 +299,51 @@ export class VehiclesController {
   @ApiResponse({ status: 403, description: 'Insufficient permissions' })
   remove(@Param('id') id: string) {
     return this.vehiclesService.deleteVehicle(id);
+  }
+
+  @Get('public')
+  @ApiOperation({ summary: 'Get all vehicles publicly (No authentication required)' })
+  @ApiResponse({ status: 200, description: 'Vehicles retrieved successfully' })
+  @ApiQuery({
+    name: 'category',
+    required: false,
+    description: 'Filter by vehicle category',
+  })
+  @ApiQuery({
+    name: 'location',
+    required: false,
+    description: 'Filter by location',
+  })
+  @ApiQuery({
+    name: 'available',
+    required: false,
+    description: 'Filter by availability',
+  })
+  @ApiQuery({
+    name: 'page',
+    required: false,
+    description: 'Page number',
+    type: Number,
+  })
+  @ApiQuery({
+    name: 'limit',
+    required: false,
+    description: 'Items per page',
+    type: Number,
+  })
+  getPublicVehicles(
+    @Query('category') category?: string,
+    @Query('location') location?: string,
+    @Query('available') available?: boolean,
+    @Query('page') page?: number,
+    @Query('limit') limit?: number,
+  ) {
+    return this.vehiclesService.findAllVehicles(
+      category,
+      location,
+      available,
+      page,
+      limit,
+    );
   }
 }

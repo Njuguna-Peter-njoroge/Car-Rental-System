@@ -1,1 +1,167 @@
-<p>carspage works!</p>
+<app-navbar></app-navbar>
+<div class="users-page">
+  <!-- Sidebar -->
+  <div class="left">
+    <div class="dashboard">
+      <h3>Users Dashboard</h3>
+      <h4><a href="#">View cars</a></h4>
+      <h4><a href="#">Set profile</a></h4>
+      <h4>
+        <a href="#" class="notifications-link">
+          Notifications
+          <span *ngIf="getNotificationCount() > 0" class="notification-badge">
+            {{ getNotificationCount() }}
+          </span>
+        </a>
+      </h4>
+
+      <!-- Notifications Panel -->
+      <div class="notifications-panel" *ngIf="notifications.length > 0">
+        <h4>Recent Notifications</h4>
+        <div class="notification-item" *ngFor="let notification of notifications">
+          <div class="notification-content">
+            <span class="notification-message">{{ notification.message }}</span>
+            <span class="notification-time">{{ notification.timestamp | date:'shortTime' }}</span>
+          </div>
+          <button class="notification-close" (click)="removeNotification(notification.id)">×</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main content -->
+  <div class="right">
+    <!-- Loading indicator -->
+    <div *ngIf="isLoading" class="loading">
+      <div class="spinner"></div>
+      <p>Loading vehicles...</p>
+    </div>
+
+    <!-- Error message -->
+    <div *ngIf="error" class="error-message">
+      <p>{{ error }}</p>
+      <button (click)="loadVehicles()">Retry</button>
+    </div>
+
+    <!-- Filters -->
+    <div class="filter-section" *ngIf="!isLoading">
+      <select [(ngModel)]="selectedCategory" (change)="filterVehicles()">
+        <option value="">All Categories</option>
+        <option *ngFor="let category of categories" [value]="category">
+          {{ category }}
+        </option>
+      </select>
+
+      <select [(ngModel)]="selectedLocation" (change)="filterVehicles()">
+        <option value="">All Locations</option>
+        <option *ngFor="let location of locations" [value]="location">
+          {{ location }}
+        </option>
+      </select>
+
+
+
+      <select [(ngModel)]="selectedFuel" (change)="filterVehicles()">
+        <option value="">All Fuel Types</option>
+        <option *ngFor="let fuel of fuelTypes" [value]="fuel">
+          {{ fuel }}
+        </option>
+      </select>
+
+      <select [(ngModel)]="selectedModel" (change)="filterVehicles()">
+        <option value="">All Models</option>
+        <option *ngFor="let model of models" [value]="model">
+          {{ model }}
+        </option>
+      </select>
+
+      <select [(ngModel)]="selectedPrice" (change)="filterVehicles()">
+        <option value="">All Prices</option>
+        <option value="0-20000">Below 20,000</option>
+        <option value="20000-40000">20,000 - 40,000</option>
+        <option value="40000-60000">40,000 - 60,000</option>
+        <option value="60000-80000">60,000 - 80,000</option>
+        <option value="80000+">Above 80,000</option>
+      </select>
+
+      <input
+        type="text"
+        [(ngModel)]="searchText"
+        (input)="filterVehicles()"
+        placeholder="Search vehicles..."
+      />
+
+      <button class="clear-filters-btn" (click)="clearAllFilters()">
+        <i class="fas fa-times"></i> Clear Filters
+      </button>
+    </div>
+
+    <!-- No results -->
+    <p *ngIf="filteredVehicles.length === 0 && !isLoading" class="no-results">No vehicles match your filters.</p>
+
+    <!-- Filtered vehicle cards -->
+    <div class="body-container" *ngIf="!isLoading">
+      <div class="cards">
+        <div class="card-content" *ngFor="let vehicle of filteredVehicles">
+          <!-- Vehicle Image -->
+          <div class="vehicle-image">
+            <img [src]="vehicle.images[0] || 'assets/default-car.jpg'"
+                 [alt]="vehicle.model"
+                 (error)="onImageError($event)">
+            <div class="vehicle-status" [class.available]="vehicle.isAvailable" [class.unavailable]="!vehicle.isAvailable">
+              {{ vehicle.isAvailable ? 'Available' : 'Unavailable' }}
+            </div>
+          </div>
+
+          <div class="header-content">
+            <div class="left">
+              <h3>{{ vehicle.model }} ({{ vehicle.year }})</h3>
+              <span class="vehicle-year">{{ vehicle.year }}</span>
+            </div>
+            <div class="right">
+              <div class="daily-rate">{{ vehicle.dailyRate | currency:'USD' }}/day</div>
+            </div>
+          </div>
+
+          <div class="body-content">
+            <p class="description" *ngIf="vehicle.description">{{ vehicle.description }}</p>
+            <div class="vehicle-specs">
+              <p><strong>Category:</strong> {{ vehicle.category }}</p>
+              <p><strong>Location:</strong> {{ vehicle.location }}</p>
+              <p><strong>Fuel:</strong> {{ vehicle.fuelType }}</p>
+              <p><strong>Transmission:</strong> {{ vehicle.transmission }}</p>
+              <p><strong>Seats:</strong> {{ vehicle.seats }}</p>
+              <p><strong>Mileage:</strong> {{ vehicle.mileage ? (vehicle.mileage | number) + ' miles' : 'N/A' }}</p>
+              <p><strong>Hourly Rate:</strong> {{ vehicle.hourlyRate ? (vehicle.hourlyRate | currency:'USD') + '/hour' : 'N/A' }}</p>
+            </div>
+
+            <!-- Features -->
+            <div class="features" *ngIf="vehicle.features && vehicle.features.length > 0">
+              <strong>Features:</strong>
+              <div class="feature-tags">
+                <span class="feature-tag" *ngFor="let feature of vehicle.features">{{ feature }}</span>
+              </div>
+            </div>
+
+            <p class="price"><strong>Daily Rate:</strong> {{ vehicle.dailyRate | currency:'USD' }}/day</p>
+          </div>
+
+          <div class="card-footer-content">
+            <div class="left">
+              <button class="btn-details" (click)="viewDetails(vehicle)">
+                <i class="fas fa-info-circle"></i> View Details
+              </button>
+            </div>
+            <div class="right">
+              <button class="btn-book"
+                      (click)="bookNow(vehicle)"
+                      [disabled]="!vehicle.isAvailable">
+                <i class="fas fa-calendar-check"></i> Book Now
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

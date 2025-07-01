@@ -1,0 +1,202 @@
+<app-navbar></app-navbar>
+
+<div class="admin-dashboard">
+  <aside class="sidebar">
+    <h3>Admin Menu</h3>
+    <ul>
+      <li><a routerLink="/admin/vehicles">Manage Vehicles</a></li>
+      <li><a routerLink="/admin/bookings">View Bookings</a></li>
+      <li><a routerLink="/admin/users">User Management</a></li>
+      <li><a (click)="viewUserProductsPage()" style="cursor: pointer;">View User Vehicles Page</a></li>
+    </ul>
+  </aside>
+
+  <main class="content">
+    <div class="dashboard-header">
+      <h1>Admin Dashboard</h1>
+      <p>Manage your vehicles and view user-facing content</p>
+    </div>
+    <div *ngIf="message" class="alert-box" [ngClass]="messageType">
+      {{ message }}
+    </div>
+
+    <div class="dashboard-sections">
+      <!-- Add Vehicle Section -->
+      <section class="add-vehicle-section">
+        <h2>Add New Vehicle</h2>
+        <form [formGroup]="vehicleForm" (ngSubmit)="onSubmit()" class="vehicle-form">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="model">Vehicle Model *</label>
+              <input type="text" id="model" formControlName="model" placeholder="e.g. Toyota Corolla" />
+              <div *ngIf="isFieldInvalid('model')" class="error-message">{{ getFieldError('model') }}</div>
+            </div>
+            <div class="form-group">
+              <label for="year">Year *</label>
+              <input type="number" id="year" formControlName="year" placeholder="e.g. 2022" min="1900" max="2030" />
+              <div *ngIf="isFieldInvalid('year')" class="error-message">{{ getFieldError('year') }}</div>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="licensePlate">License Plate *</label>
+              <input type="text" id="licensePlate" formControlName="licensePlate" placeholder="e.g. ABC123" />
+              <div *ngIf="isFieldInvalid('licensePlate')" class="error-message">{{ getFieldError('licensePlate') }}</div>
+            </div>
+            <div class="form-group">
+              <label for="vin">VIN *</label>
+              <input type="text" id="vin" formControlName="vin" placeholder="17-character VIN" />
+              <div *ngIf="isFieldInvalid('vin')" class="error-message">{{ getFieldError('vin') }}</div>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="category">Category *</label>
+              <select id="category" formControlName="category">
+                <option value="">Select Category</option>
+                <option value="Sedan">Sedan</option>
+                <option value="SUV">SUV</option>
+                <option value="Economy">Economy</option>
+                <option value="Luxury">Luxury</option>
+                <option value="Sports">Sports</option>
+                <option value="Van">Van</option>
+                <option value="Truck">Truck</option>
+              </select>
+              <div *ngIf="isFieldInvalid('category')" class="error-message">{{ getFieldError('category') }}</div>
+            </div>
+            <div class="form-group">
+              <label for="transmission">Transmission *</label>
+              <select id="transmission" formControlName="transmission">
+                <option value="">Select Transmission</option>
+                <option value="Automatic">Automatic</option>
+                <option value="Manual">Manual</option>
+              </select>
+              <div *ngIf="isFieldInvalid('transmission')" class="error-message">{{ getFieldError('transmission') }}</div>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="fuelType">Fuel Type *</label>
+              <select id="fuelType" formControlName="fuelType">
+                <option value="">Select Fuel Type</option>
+                <option value="Gasoline">Gasoline</option>
+                <option value="Diesel">Diesel</option>
+                <option value="Electric">Electric</option>
+                <option value="Hybrid">Hybrid</option>
+                <option value="LPG">LPG</option>
+              </select>
+              <div *ngIf="isFieldInvalid('fuelType')" class="error-message">{{ getFieldError('fuelType') }}</div>
+            </div>
+            <div class="form-group">
+              <label for="seats">Number of Seats *</label>
+              <input type="number" id="seats" formControlName="seats" placeholder="e.g. 5" min="1" max="20" />
+              <div *ngIf="isFieldInvalid('seats')" class="error-message">{{ getFieldError('seats') }}</div>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="dailyRate">Daily Rate (USD) *</label>
+              <input type="number" id="dailyRate" formControlName="dailyRate" placeholder="e.g. 50" step="0.01" min="0" />
+              <div *ngIf="isFieldInvalid('dailyRate')" class="error-message">{{ getFieldError('dailyRate') }}</div>
+            </div>
+            <div class="form-group">
+              <label for="hourlyRate">Hourly Rate (USD)</label>
+              <input type="number" id="hourlyRate" formControlName="hourlyRate" placeholder="e.g. 10" step="0.01" min="0" />
+              <div *ngIf="isFieldInvalid('hourlyRate')" class="error-message">{{ getFieldError('hourlyRate') }}</div>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="location">Location *</label>
+              <input type="text" id="location" formControlName="location" placeholder="e.g. New York" />
+              <div *ngIf="isFieldInvalid('location')" class="error-message">{{ getFieldError('location') }}</div>
+            </div>
+            <div class="form-group">
+              <label for="mileage">Mileage</label>
+              <input type="number" id="mileage" formControlName="mileage" placeholder="e.g. 10000" min="0" />
+              <div *ngIf="isFieldInvalid('mileage')" class="error-message">{{ getFieldError('mileage') }}</div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="description">Description *</label>
+            <textarea id="description" formControlName="description" rows="4" placeholder="Enter vehicle description"></textarea>
+            <div *ngIf="isFieldInvalid('description')" class="error-message">{{ getFieldError('description') }}</div>
+          </div>
+
+          <div class="form-group">
+            <label for="features">Features (comma-separated)</label>
+            <input type="text" id="features" formControlName="features" placeholder="e.g. AC, Bluetooth, GPS, Backup Camera" />
+          </div>
+
+          <div class="form-group">
+            <label for="image">Upload Vehicle Image *</label>
+            <input type="file" id="image" (change)="onFileSelected($event)" accept="image/*" />
+            <p class="uploading" *ngIf="isUploading">Uploading image...</p>
+          </div>
+
+          <div *ngIf="imageUrl" class="image-preview">
+            <h4>Image Preview:</h4>
+            <img [src]="imageUrl" alt="Vehicle preview" />
+          </div>
+
+          <button type="submit" [disabled]="vehicleForm.invalid || isUploading || isSubmitting" class="submit-btn">
+            {{ isSubmitting ? 'Adding Vehicle...' : (isUploading ? 'Please wait...' : 'Add Vehicle') }}
+          </button>
+        </form>
+      </section>
+
+      <!-- Vehicles List Section -->
+      <section class="vehicles-list-section">
+        <h2>Current Vehicles</h2>
+        <div *ngIf="isLoading" class="loading">
+          <div class="spinner"></div>
+          <p>Loading vehicles...</p>
+        </div>
+        <div class="vehicles-grid" *ngIf="!isLoading && vehicles.length > 0; else noVehicles">
+          <div class="vehicle-card" *ngFor="let vehicle of vehicles">
+            <div class="vehicle-image">
+              <img [src]="vehicle.images[0] || 'assets/default-car.jpg'" [alt]="vehicle.model" />
+              <div class="vehicle-status" [class.available]="vehicle.isAvailable" [class.unavailable]="!vehicle.isAvailable">
+                {{ vehicle.isAvailable ? 'Available' : 'Unavailable' }}
+              </div>
+            </div>
+            <div class="vehicle-info">
+              <h3>{{ vehicle.model }} ({{ vehicle.year }})</h3>
+              <p class="category">{{ vehicle.category }}</p>
+              <p class="license-plate">License: {{ vehicle.licensePlate }}</p>
+              <p class="daily-rate">${{ vehicle.dailyRate }}/day</p>
+              <p class="hourly-rate" *ngIf="vehicle.hourlyRate">${{ vehicle.hourlyRate }}/hour</p>
+              <p class="location">{{ vehicle.location }}</p>
+              <p class="description">{{ vehicle.description }}</p>
+              <div class="vehicle-specs">
+                <span class="spec">{{ vehicle.transmission }}</span>
+                <span class="spec">{{ vehicle.fuelType }}</span>
+                <span class="spec">{{ vehicle.seats }} seats</span>
+                <span class="spec" *ngIf="vehicle.mileage">{{ vehicle.mileage | number }} miles</span>
+              </div>
+              <div class="features" *ngIf="vehicle.features && vehicle.features.length > 0">
+                <strong>Features:</strong>
+                <div class="feature-tags">
+                  <span class="feature-tag" *ngFor="let feature of vehicle.features">{{ feature }}</span>
+                </div>
+              </div>
+            </div>
+            <div class="vehicle-actions">
+              <button (click)="editVehicle(vehicle.id)" class="edit-btn">Edit</button>
+              <button (click)="deleteVehicle(vehicle.id)" class="delete-btn">Delete</button>
+            </div>
+          </div>
+        </div>
+        <ng-template #noVehicles>
+          <p class="no-vehicles">No vehicles added yet. Add your first vehicle above!</p>
+        </ng-template>
+      </section>
+    </div>
+  </main>
+</div> 

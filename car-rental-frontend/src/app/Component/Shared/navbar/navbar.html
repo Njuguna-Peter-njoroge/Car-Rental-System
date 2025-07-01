@@ -51,7 +51,7 @@
 
       <!-- Authentication Section -->
       <ul class="navbar-auth">
-        <!-- Guest Menu -->
+        <!-- Guest Menu - Show when not authenticated -->
         <ng-container *ngIf="!isAuthenticated">
           <li class="nav-item">
             <a routerLink="/auth" class="nav-link btn btn-outline">
@@ -65,13 +65,13 @@
           </li>
         </ng-container>
 
-        <!-- Authenticated User Menu -->
-        <ng-container *ngIf="isAuthenticated">
+        <!-- Authenticated User Menu - Show when authenticated -->
+        <ng-container *ngIf="isAuthenticated && currentUser">
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" role="button" (click)="toggleDropdown($event)" 
                [class.active]="isDropdownOpen">
               <i class="fas fa-user-circle"></i> 
-              {{ currentUser?.name || 'User' }}
+              {{ currentUser.name || 'User' }}
             </a>
             <ul class="dropdown-menu" [class.active]="isDropdownOpen">
               <li>

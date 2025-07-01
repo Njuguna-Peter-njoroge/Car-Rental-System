@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { AuthService, User } from '../../../services/auth.service';
@@ -18,26 +18,29 @@ export class NavbarComponent implements OnInit, OnDestroy {
   isMenuOpen = false;
   isDropdownOpen = false;
   private authSubscription: Subscription | null = null;
+  private userSubscription: Subscription | null = null;
 
   constructor(private authService: AuthService) {}
 
   ngOnInit(): void {
     // Subscribe to authentication state changes
-    this.authSubscription = this.authService.currentUser.subscribe(user => {
-      this.currentUser = user;
-      this.isAuthenticated = !!user;
-      this.isAdmin = user?.role === 'ADMIN';
+    this.authSubscription = this.authService.isAuthenticated$.subscribe(isAuthenticated => {
+      this.isAuthenticated = isAuthenticated;
     });
 
-    // Check initial authentication state
-    this.isAuthenticated = this.authService.isAuthenticated();
-    this.currentUser = this.authService.currentUserValue;
-    this.isAdmin = this.authService.isAdmin();
+    // Subscribe to user changes
+    this.userSubscription = this.authService.currentUser$.subscribe(user => {
+      this.currentUser = user;
+      this.isAdmin = user?.role === 'ADMIN';
+    });
   }
 
   ngOnDestroy(): void {
     if (this.authSubscription) {
       this.authSubscription.unsubscribe();
+    }
+    if (this.userSubscription) {
+      this.userSubscription.unsubscribe();
     }
   }
 
@@ -50,33 +53,10 @@ export class NavbarComponent implements OnInit, OnDestroy {
     this.isDropdownOpen = !this.isDropdownOpen;
   }
 
-  @HostListener('document:click', ['$event'])
-  onDocumentClick(event: Event): void {
-    // Close dropdown when clicking outside
-    const target = event.target as HTMLElement;
-    if (!target.closest('.dropdown')) {
-      this.isDropdownOpen = false;
-    }
-  }
-
-  @HostListener('window:resize')
-  onResize(): void {
-    // Close mobile menu on window resize
-    if (window.innerWidth > 768) {
-      this.isMenuOpen = false;
-    }
-  }
-
   logout(): void {
-    this.authService.logout().subscribe({
-      next: () => {
-        console.log('Logged out successfully');
-        this.isDropdownOpen = false;
-        // Router navigation will be handled by the auth service
-      },
-      error: (error) => {
-        console.error('Logout error:', error);
-      }
-    });
+    this.authService.logout();
+    this.isDropdownOpen = false;
+    // Redirect to login page
+    window.location.href = '/auth';
   }
 }

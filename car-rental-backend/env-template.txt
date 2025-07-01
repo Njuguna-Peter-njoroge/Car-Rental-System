@@ -7,6 +7,11 @@ DATABASE_URL="postgresql://username:password@localhost:5432/car_rental_db"
 JWT_SECRET="your-super-secret-jwt-key-here"
 JWT_REFRESH_SECRET="your-super-secret-refresh-key-here"
 
+# Cloudinary Configuration
+CLOUDINARY_CLOUD_NAME="your-cloud-name"
+CLOUDINARY_API_KEY="your-api-key"
+CLOUDINARY_API_SECRET="your-api-secret"
+
 # Email Configuration (Gmail)
 SMTP_HOST=smtp.gmail.com
 SMTP_PORT=587
@@ -27,6 +32,12 @@ PORT=3000
 # 3. Go to Security > App passwords
 # 4. Generate a new app password for "Mail"
 # 5. Use that password in SMTP_PASS
+
+# Instructions for Cloudinary Setup:
+# 1. Sign up at https://cloudinary.com/
+# 2. Go to Dashboard to get your credentials
+# 3. Copy your Cloud Name, API Key, and API Secret
+# 4. Replace the placeholder values above
 
 # Alternative: Use Ethereal Email for testing (fake SMTP)
 # SMTP_HOST=smtp.ethereal.email

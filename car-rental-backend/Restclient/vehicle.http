@@ -1,6 +1,6 @@
 ### Environment Variables
 @baseUrl = http://localhost:3000
-@authToken = Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI3YjRiNTJlNC1iNDRkLTQxMmUtYWNjZi1kNGEzZGQ3MmIwNWYiLCJlbWFpbCI6Im5qdWd1bmFocGV0ZXJuam9yb2dlQGdtYWlsLmNvbSIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc1MTIzMDc0NSwiZXhwIjoxNzUxMzE3MTQ1fQ.agW5-uYgPlY9zCkSKC_G6lbdgtcrTkD4Nd0y-8nOZxM
+@authToken = Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2YzgzM2RhZC04YzI0LTQxYzYtYWUwYi1hZTRjNWYwYWQzYjgiLCJlbWFpbCI6ImRldnBldGVybmpvcm9nZUBnbWFpbC5jb20iLCJyb2xlIjoiQURNSU4iLCJpYXQiOjE3NTEzNDMyMjYsImV4cCI6MTc1MTQyOTYyNn0.-aJlsWDmKDKL_FsvTRGeyIUEg6OZHEkWSOwMjLODuI8
 
 ### 1. Create a Vehicle (Admin/Agent only)
 POST {{baseUrl}}/vehicles
@@ -10,20 +10,20 @@ Authorization: {{authToken}}
 {
   "model": "Toyota Corolla",
   "year": 2022,
-  "licensePlate": "hteeddvd",
-  "vin": "1HGCM4543633A004352",
-  "category": "Sedan",
-  "transmission": "Automatic",
-  "fuelType": "Gasoline",
-  "seats": 5,
-  "dailyRate": 50,
-  "hourlyRate": 10,
-  "isAvailable": true,
-  "location": "New York",
-  "features": ["AC", "Bluetooth", "Backup Camera"],
-  "images": ["https://example.com/car1.jpg", "https://example.com/car2.jpg"],
+  "licensePlate": "rdfdvdvn34",
+  "vin": "1HGCMered633A004352",
+  "category": "Suv",
+  "transmission": "manual",
+  "fuelType": "petol",
+  "seats": 7,
+  "dailyRate": 100,
+  "hourlyRate": 60,
+  "isAvailable": false,
+  "location": " algeria",
+  "features": ["Ac", "fun", "strong engine"],
+  "images": ["https://res.cloudinary.com/dixzwawtl/image/upload/v1750750589/Screenshot_from_2025-06-24_10-00-09_jo7g8d.png"],
   "description": "A comfortable and reliable sedan perfect for daily commuting",
-  "mileage": 10000,
+  "mileage": 6000,
   "status": "ACTIVE"
 }
 
@@ -40,7 +40,7 @@ GET {{baseUrl}}/vehicles?category=Sedan&isAvailable=true&minDailyRate=30&maxDail
 Authorization: {{authToken}}
 
 ### 5. Get Vehicle by ID (Public)
-GET {{baseUrl}}/vehicles/595b1feb-65af-46b8-94c5-e4674c9941c9
+GET {{baseUrl}}/vehicles/45ef139e-0a34-4982-a982-a88ce3bbf132
 Authorization: {{authToken}}
 
 ### 6. Search Vehicles (Public)

@@ -1,0 +1,127 @@
+### Cloudinary Testing with REST Client
+### Make sure your backend server is running on port 3000
+
+### 1. Test Cloudinary Connectivity
+GET http://localhost:3000/upload/test
+Content-Type: application/json
+
+###
+
+### 2. Test File Upload (Single File)
+POST http://localhost:3000/upload/test-upload
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="file"; filename="test-image.jpg"
+Content-Type: image/jpeg
+
+< /home/peter/Dev/car Rental web app/car-rental-backend/Shared/shopieavif
+------WebKitFormBoundary7MA4YWxkTrZu0gW--
+
+###
+
+### 3. Test Profile Image Upload (Requires Authentication)
+POST http://localhost:3000/upload/profile-image
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+Authorization: Bearer {{authToken}}
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="image"; filename="profile.jpg"
+Content-Type: image/jpeg
+
+< ./profile.jpg
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="userId"
+
+123
+------WebKitFormBoundary7MA4YWxkTrZu0gW--
+
+###
+
+### 4. Test Vehicle Images Upload (Requires Admin Authentication)
+POST http://localhost:3000/upload/vehicle-images
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+Authorization: Bearer {{adminToken}}
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="images"; filename="vehicle1.jpg"
+Content-Type: image/jpeg
+
+< ./vehicle1.jpg
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="images"; filename="vehicle2.jpg"
+Content-Type: image/jpeg
+
+< ./vehicle2.jpg
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="vehicleId"
+
+456
+------WebKitFormBoundary7MA4YWxkTrZu0gW--
+
+###
+
+### 5. Test Document Upload (Requires Authentication)
+POST http://localhost:3000/upload/document
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+Authorization: Bearer {{authToken}}
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="document"; filename="document.pdf"
+Content-Type: application/pdf
+
+< ./document.pdf
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="documentType"
+
+booking_receipt
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="entityId"
+
+789
+------WebKitFormBoundary7MA4YWxkTrZu0gW--
+
+###
+
+### 6. Test Gallery Images Upload (Requires Authentication)
+POST http://localhost:3000/upload/gallery
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+Authorization: Bearer {{authToken}}
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="images"; filename="gallery1.jpg"
+Content-Type: image/jpeg
+
+< ./gallery1.jpg
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="images"; filename="gallery2.jpg"
+Content-Type: image/jpeg
+
+< ./gallery2.jpg
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="images"; filename="gallery3.jpg"
+Content-Type: image/jpeg
+
+< ./gallery3.jpg
+------WebKitFormBoundary7MA4YWxkTrZu0gW--
+
+###
+
+### 7. Test File Deletion (Requires Authentication)
+DELETE http://localhost:3000/upload/delete/{{publicId}}
+Authorization: Bearer {{authToken}}
+
+###
+
+### 8. Test with Sample Image (Base64 encoded small image)
+POST http://localhost:3000/upload/test-upload
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="file"; filename="sample.png"
+Content-Type: image/png
+
+< ./sample.png
+------WebKitFormBoundary7MA4YWxkTrZu0gW--
+
+### 

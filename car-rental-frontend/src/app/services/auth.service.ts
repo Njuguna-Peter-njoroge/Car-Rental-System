@@ -1,8 +1,18 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { BehaviorSubject, Observable, throwError } from 'rxjs';
-import { map, catchError } from 'rxjs/operators';
+import { map, catchError, tap } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
+
+export interface User {
+  id: string;
+  name: string;
+  email: string;
+  role: string;
+  profileImage?: string;
+  isEmailVerified: boolean;
+  status: string;
+}
 
 export interface LoginRequest {
   email: string;
@@ -13,248 +23,186 @@ export interface RegisterRequest {
   name: string;
   email: string;
   password: string;
-  phone?: string;
-  role?: 'USER' | 'ADMIN';
+  phone: string;
 }
 
-export interface User {
-  id: number;
+export interface ForgotPasswordRequest {
   email: string;
-  name: string;
-  role: 'USER' | 'ADMIN';
-  isEmailVerified: boolean;
-  createdAt: Date;
-  updatedAt: Date;
+}
+
+export interface ResetPasswordRequest {
+  token: string;
+  newPassword: string;
 }
 
 export interface AuthResponse {
   user: User;
-  token: string;
-  message?: string;
-}
-
-export interface ApiResponse<T> {
-  success: boolean;
-  data?: T;
-  message?: string;
-  error?: string;
+  accessToken: string;
+  refreshToken: string;
 }
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  private currentUserSubject: BehaviorSubject<User | null>;
-  public currentUser: Observable<User | null>;
   private apiUrl = environment.apiUrl;
+  private currentUserSubject = new BehaviorSubject<User | null>(null);
+  public currentUser$ = this.currentUserSubject.asObservable();
+  private isAuthenticatedSubject = new BehaviorSubject<boolean>(false);
+  public isAuthenticated$ = this.isAuthenticatedSubject.asObservable();
 
   constructor(private http: HttpClient) {
-    this.currentUserSubject = new BehaviorSubject<User | null>(
-      JSON.parse(localStorage.getItem('currentUser') || 'null')
-    );
-    this.currentUser = this.currentUserSubject.asObservable();
+    this.loadStoredUser();
   }
 
-  public get currentUserValue(): User | null {
-    return this.currentUserSubject.value;
+  private loadStoredUser(): void {
+    const storedUser = localStorage.getItem('currentUser');
+    const token = localStorage.getItem('accessToken');
+
+    if (
+      storedUser &&
+      storedUser !== 'undefined' &&
+      token
+    ) {
+      try {
+        const user = JSON.parse(storedUser);
+        this.currentUserSubject.next(user);
+        this.isAuthenticatedSubject.next(true);
+      } catch (e) {
+        // If parsing fails, clear the invalid value
+        localStorage.removeItem('currentUser');
+        this.currentUserSubject.next(null);
+        this.isAuthenticatedSubject.next(false);
+      }
+    }
   }
 
-  // Login user
-  login(loginData: LoginRequest): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`${this.apiUrl}/login`, loginData)
+  login(credentials: LoginRequest): Observable<AuthResponse> {
+    return this.http.post<AuthResponse>(`${this.apiUrl}/auth/login`, credentials)
       .pipe(
-        map(response => {
-          if (response.user && response.token) {
-            localStorage.setItem('currentUser', JSON.stringify(response.user));
-            localStorage.setItem('token', response.token);
-            this.currentUserSubject.next(response.user);
-          }
-          return response;
+        tap(response => {
+          this.setSession(response);
         }),
         catchError(this.handleError)
       );
   }
 
-  // Register new user
-  register(registerData: RegisterRequest): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`${this.apiUrl}/register`, registerData)
+  register(userData: RegisterRequest): Observable<AuthResponse> {
+    return this.http.post<AuthResponse>(`${this.apiUrl}/auth/register`, userData)
       .pipe(
-        map(response => {
-          if (response.user && response.token) {
-            localStorage.setItem('currentUser', JSON.stringify(response.user));
-            localStorage.setItem('token', response.token);
-            this.currentUserSubject.next(response.user);
-          }
-          return response;
+        tap(response => {
+          this.setSession(response);
         }),
         catchError(this.handleError)
       );
   }
 
-  // Forgot password
-  forgotPassword(email: string): Observable<ApiResponse<any>> {
-    return this.http.post<ApiResponse<any>>(`${this.apiUrl}/forgot-password`, { email })
-      .pipe(catchError(this.handleError));
-  }
-
-  // Reset password
-  resetPassword(token: string, newPassword: string): Observable<ApiResponse<any>> {
-    return this.http.post<ApiResponse<any>>(`${this.apiUrl}/reset-password`, { 
-      token, 
-      newPassword 
-    }).pipe(catchError(this.handleError));
-  }
-
-  // Logout user
-  logout(): Observable<ApiResponse<any>> {
-    return this.http.post<ApiResponse<any>>(`${this.apiUrl}/logout`, {})
+  forgotPassword(email: string): Observable<any> {
+    return this.http.post(`${this.apiUrl}/auth/forgot-password`, { email })
       .pipe(
-        map(response => {
-          this.clearLocalStorage();
-          return response;
-        }),
         catchError(this.handleError)
       );
   }
 
-  // Check if user is authenticated
-  isAuthenticated(): boolean {
-    const user = this.currentUserValue;
-    const token = localStorage.getItem('token');
-    return !!(user && token);
-  }
-
-  // Get stored token
-  getToken(): string | null {
-    return localStorage.getItem('token');
-  }
-
-  // Refresh token
-  refreshToken(): Observable<ApiResponse<{ token: string }>> {
-    return this.http.post<ApiResponse<{ token: string }>>(`${this.apiUrl}/refresh-token`, {})
-      .pipe(
-        map(response => {
-          if (response.data?.token) {
-            localStorage.setItem('token', response.data.token);
-          }
-          return response;
-        }),
-        catchError(this.handleError)
-      );
-  }
-
-  // Verify email
-  verifyEmail(token: string): Observable<ApiResponse<any>> {
-    return this.http.get<ApiResponse<any>>(`${this.apiUrl}/verify-email?token=${token}`)
-      .pipe(catchError(this.handleError));
-  }
-
-  // Resend verification email
-  resendVerification(email: string): Observable<ApiResponse<any>> {
-    return this.http.post<ApiResponse<any>>(`${this.apiUrl}/resend-verification`, { email })
-      .pipe(catchError(this.handleError));
-  }
-
-  // Get user profile
-  getProfile(): Observable<User> {
-    return this.http.get<User>(`${this.apiUrl}/me`)
-      .pipe(
-        map(user => {
-          this.currentUserSubject.next(user);
-          return user;
-        }),
-        catchError(this.handleError)
-      );
-  }
-
-  // Update user profile
-  updateProfile(userData: Partial<User>): Observable<User> {
-    return this.http.put<User>(`${this.apiUrl}/me`, userData)
-      .pipe(
-        map(user => {
-          localStorage.setItem('currentUser', JSON.stringify(user));
-          this.currentUserSubject.next(user);
-          return user;
-        }),
-        catchError(this.handleError)
-      );
-  }
-
-  // Change password
-  changePassword(currentPassword: string, newPassword: string): Observable<ApiResponse<any>> {
-    return this.http.post<ApiResponse<any>>(`${this.apiUrl}/change-password`, {
-      currentPassword,
+  resetPassword(token: string, newPassword: string): Observable<any> {
+    return this.http.post(`${this.apiUrl}/auth/reset-password`, {
+      token,
       newPassword
-    }).pipe(catchError(this.handleError));
+    }).pipe(
+      catchError(this.handleError)
+    );
   }
 
-  // Delete account
-  deleteAccount(password: string): Observable<ApiResponse<any>> {
-    return this.http.delete<ApiResponse<any>>(`${this.apiUrl}/me`, {
-      body: { password }
+  verifyEmail(token: string): Observable<any> {
+    return this.http.get(`${this.apiUrl}/auth/verify-email?token=${token}`)
+      .pipe(
+        catchError(this.handleError)
+      );
+  }
+
+  resendVerification(email: string): Observable<any> {
+    return this.http.post(`${this.apiUrl}/auth/resend-verification`, { email })
+      .pipe(
+        catchError(this.handleError)
+      );
+  }
+
+  logout(): void {
+    localStorage.removeItem('currentUser');
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('refreshToken');
+    this.currentUserSubject.next(null);
+    this.isAuthenticatedSubject.next(false);
+  }
+
+  refreshToken(): Observable<AuthResponse> {
+    const refreshToken = localStorage.getItem('refreshToken');
+    if (!refreshToken) {
+      return throwError('No refresh token available');
+    }
+
+    return this.http.post<AuthResponse>(`${this.apiUrl}/auth/refresh-token`, {
+      refreshToken
     }).pipe(
-      map(response => {
-        this.clearLocalStorage();
-        return response;
+      tap(response => {
+        this.setSession(response);
       }),
       catchError(this.handleError)
     );
   }
 
-  // Clear local storage
-  private clearLocalStorage(): void {
-    localStorage.removeItem('currentUser');
-    localStorage.removeItem('token');
-    this.currentUserSubject.next(null);
+  getCurrentUser(): User | null {
+    return this.currentUserSubject.value;
   }
 
-  // Error handling
-  private handleError(error: HttpErrorResponse): Observable<never> {
-    let errorMessage = 'An error occurred';
-    
-    if (error.error instanceof ErrorEvent) {
-      // Client-side error
-      errorMessage = error.error.message;
-    } else {
-      // Server-side error
-      if (error.status === 0) {
-        errorMessage = 'Unable to connect to server. Please check your internet connection.';
-      } else if (error.status === 401) {
-        errorMessage = 'Invalid credentials. Please try again.';
-      } else if (error.status === 403) {
-        errorMessage = 'Access denied. You do not have permission to perform this action.';
-      } else if (error.status === 404) {
-        errorMessage = 'Resource not found.';
-      } else if (error.status === 409) {
-        errorMessage = 'Email already exists. Please use a different email address.';
-      } else if (error.status === 422) {
-        errorMessage = error.error?.message || 'Validation error. Please check your input.';
-      } else if (error.status >= 500) {
-        errorMessage = 'Server error. Please try again later.';
-      } else {
-        errorMessage = error.error?.message || `Error ${error.status}: ${error.statusText}`;
-      }
-    }
-    
-    console.error('AuthService Error:', error);
-    return throwError(() => new Error(errorMessage));
+  isAuthenticated(): boolean {
+    return this.isAuthenticatedSubject.value;
   }
 
-  // Check if user has admin role
+  getAuthHeaders(): HttpHeaders {
+    const token = localStorage.getItem('accessToken');
+    return new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    });
+  }
+
+  getToken(): string | null {
+    return localStorage.getItem('accessToken');
+  }
+
   isAdmin(): boolean {
-    const user = this.currentUserValue;
+    const user = this.getCurrentUser();
     return user?.role === 'ADMIN';
   }
 
-  // Check if user has user role
   isUser(): boolean {
-    const user = this.currentUserValue;
+    const user = this.getCurrentUser();
     return user?.role === 'USER';
   }
 
-  // Check if email is verified
   isEmailVerified(): boolean {
-    const user = this.currentUserValue;
+    const user = this.getCurrentUser();
     return user?.isEmailVerified || false;
+  }
+
+  private setSession(response: AuthResponse): void {
+    localStorage.setItem('currentUser', JSON.stringify(response.user));
+    localStorage.setItem('accessToken', response.accessToken);
+    localStorage.setItem('refreshToken', response.refreshToken);
+    this.currentUserSubject.next(response.user);
+    this.isAuthenticatedSubject.next(true);
+  }
+
+  private handleError(error: any): Observable<never> {
+    let errorMessage = 'An error occurred';
+
+    if (error.error && error.error.message) {
+      errorMessage = error.error.message;
+    } else if (error.message) {
+      errorMessage = error.message;
+    }
+
+    return throwError(() => new Error(errorMessage));
   }
 } 

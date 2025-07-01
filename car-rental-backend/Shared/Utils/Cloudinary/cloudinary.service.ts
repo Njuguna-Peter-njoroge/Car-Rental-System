@@ -29,7 +29,7 @@ export interface CloudinaryUploadResult {
  * Configuration for different upload types in hotel management
  */
 export interface HotelUploadConfig {
-    uploadType: HotelUploadType;
+    uploadType: CarRentalUploadType;
     maxSizeBytes: number; // Maximum file size allowed
     allowedFormats: string[]; // Allowed file extensions
     folder: string; // Cloudinary folder structure
@@ -37,14 +37,14 @@ export interface HotelUploadConfig {
 }
 
 
-export enum HotelUploadType {
+export enum CarRentalUploadType {
     USER_PROFILE = 'user_profile', // User profile pictures
-    ROOM_IMAGE = 'room_image', // Room photos
-    ROOM_TYPE_IMAGE = 'room_type_image', // Room type showcase images
+    VEHICLE_IMAGE = 'vehicle_image', // Vehicle photos
+    VEHICLE_TYPE_IMAGE = 'vehicle_type_image', // Vehicle type showcase images
     BOOKING_DOCUMENT = 'booking_document', // Booking-related documents
     ID_DOCUMENT = 'id_document', // Identification documents
-    HOTEL_AMENITY = 'hotel_amenity', // Hotel facility images
-    GALLERY = 'gallery', // Hotel gallery images
+    VEHICLE_AMENITY = 'vehicle_amenity', // Vehicle facility images
+    GALLERY = 'gallery', // Vehicle gallery images
     DOCUMENT = 'document', // General documents
     MARKETING = 'marketing', // Marketing materials
 }
@@ -68,13 +68,13 @@ export class CloudinaryService {
      * Get upload configuration based on upload type
      * Each type has specific size limits, allowed formats, and folder structure
      */
-    private getUploadConfig(uploadType: HotelUploadType): HotelUploadConfig {
-        const configs: Record<HotelUploadType, HotelUploadConfig> = {
-            [HotelUploadType.USER_PROFILE]: {
+    private getUploadConfig(uploadType: CarRentalUploadType): HotelUploadConfig {
+        const configs: Record<CarRentalUploadType, HotelUploadConfig> = {
+            [CarRentalUploadType.USER_PROFILE]: {
                 uploadType,
                 maxSizeBytes: 2 * 1024 * 1024, // 2MB
                 allowedFormats: ['jpg', 'jpeg', 'png', 'webp'],
-                folder: 'hotel-management/users/profiles',
+                folder: 'car-rental-app/users/profiles',
                 transformations: {
                     width: 400,
                     height: 400,
@@ -84,11 +84,11 @@ export class CloudinaryService {
                     format: 'auto',
                 },
             },
-            [HotelUploadType.ROOM_IMAGE]: {
+            [CarRentalUploadType.VEHICLE_IMAGE]: {
                 uploadType,
                 maxSizeBytes: 8 * 1024 * 1024, // 8MB
                 allowedFormats: ['jpg', 'jpeg', 'png', 'webp'],
-                folder: 'hotel-management/rooms/images',
+                folder: 'car-rental-app/vehicles/images',
                 transformations: {
                     width: 1200,
                     height: 800,
@@ -97,11 +97,11 @@ export class CloudinaryService {
                     format: 'auto',
                 },
             },
-            [HotelUploadType.ROOM_TYPE_IMAGE]: {
+            [CarRentalUploadType.VEHICLE_TYPE_IMAGE]: {
                 uploadType,
                 maxSizeBytes: 5 * 1024 * 1024, // 5MB
                 allowedFormats: ['jpg', 'jpeg', 'png', 'webp'],
-                folder: 'hotel-management/room-types/images',
+                folder: 'car-rental-app/vehicle-types/images',
                 transformations: {
                     width: 800,
                     height: 600,
@@ -110,23 +110,23 @@ export class CloudinaryService {
                     format: 'auto',
                 },
             },
-            [HotelUploadType.BOOKING_DOCUMENT]: {
+            [CarRentalUploadType.BOOKING_DOCUMENT]: {
                 uploadType,
                 maxSizeBytes: 10 * 1024 * 1024, // 10MB
                 allowedFormats: ['pdf', 'jpg', 'jpeg', 'png', 'doc', 'docx'],
-                folder: 'hotel-management/bookings/documents',
+                folder: 'car-rental-app/bookings/documents',
             },
-            [HotelUploadType.ID_DOCUMENT]: {
+            [CarRentalUploadType.ID_DOCUMENT]: {
                 uploadType,
                 maxSizeBytes: 5 * 1024 * 1024, // 5MB
                 allowedFormats: ['pdf', 'jpg', 'jpeg', 'png'],
-                folder: 'hotel-management/users/documents',
+                folder: 'car-rental-app/users/documents',
             },
-            [HotelUploadType.HOTEL_AMENITY]: {
+            [CarRentalUploadType.VEHICLE_AMENITY]: {
                 uploadType,
                 maxSizeBytes: 8 * 1024 * 1024, // 8MB
                 allowedFormats: ['jpg', 'jpeg', 'png', 'webp'],
-                folder: 'hotel-management/amenities',
+                folder: 'car-rental-app/amenities',
                 transformations: {
                     width: 800,
                     height: 600,
@@ -135,11 +135,11 @@ export class CloudinaryService {
                     format: 'auto',
                 },
             },
-            [HotelUploadType.GALLERY]: {
+            [CarRentalUploadType.GALLERY]: {
                 uploadType,
                 maxSizeBytes: 10 * 1024 * 1024, // 10MB
                 allowedFormats: ['jpg', 'jpeg', 'png', 'webp'],
-                folder: 'hotel-management/gallery',
+                folder: 'car-rental-app/gallery',
                 transformations: {
                     width: 1200,
                     height: 800,
@@ -148,17 +148,17 @@ export class CloudinaryService {
                     format: 'auto',
                 },
             },
-            [HotelUploadType.DOCUMENT]: {
+            [CarRentalUploadType.DOCUMENT]: {
                 uploadType,
                 maxSizeBytes: 15 * 1024 * 1024, // 15MB
                 allowedFormats: ['pdf', 'doc', 'docx', 'txt', 'jpg', 'jpeg', 'png'],
-                folder: 'hotel-management/documents/general',
+                folder: 'car-rental-app/documents/general',
             },
-            [HotelUploadType.MARKETING]: {
+            [CarRentalUploadType.MARKETING]: {
                 uploadType,
                 maxSizeBytes: 10 * 1024 * 1024, // 10MB
                 allowedFormats: ['jpg', 'jpeg', 'png', 'webp', 'pdf'],
-                folder: 'hotel-management/marketing',
+                folder: 'car-rental-app/marketing',
                 transformations: {
                     width: 1200,
                     height: 800,
@@ -260,7 +260,7 @@ export class CloudinaryService {
      */
     async uploadFile(
         file: any,
-        uploadType: HotelUploadType,
+        uploadType: CarRentalUploadType,
         options?: {
             entityId?: string | number;
             entityType?: string;
@@ -362,7 +362,7 @@ export class CloudinaryService {
      */
     async uploadMultipleFiles(
         files: any[],
-        uploadType: HotelUploadType,
+        uploadType: CarRentalUploadType,
         options?: {
             entityId?: string | number;
             entityType?: string;
@@ -414,7 +414,7 @@ export class CloudinaryService {
                 });
             }
 
-            return await this.uploadFile(file, HotelUploadType.USER_PROFILE, {
+            return await this.uploadFile(file, CarRentalUploadType.USER_PROFILE, {
                 entityId: userId,
                 entityType: 'user',
                 tags: ['profile', 'user'],
@@ -429,32 +429,32 @@ export class CloudinaryService {
     }
 
     /**
-     * Upload room images with room association
+     * Upload vehicle images with vehicle association
      */
-    async uploadRoomImages(
+    async uploadVehicleImages(
         files: any[],
-        roomId: number,
+        vehicleId: number,
     ): Promise<CloudinaryUploadResult[]> {
-        return await this.uploadMultipleFiles(files, HotelUploadType.ROOM_IMAGE, {
-            entityId: roomId,
-            entityType: 'room',
-            tags: ['room', 'hotel'],
-            context: { room_id: roomId },
+        return await this.uploadMultipleFiles(files, CarRentalUploadType.VEHICLE_IMAGE, {
+            entityId: vehicleId,
+            entityType: 'vehicle',
+            tags: ['vehicle', 'car-rental'],
+            context: { vehicle_id: vehicleId },
         });
     }
 
     /**
-     * Upload room type images with room type association
+     * Upload vehicle type images with vehicle type association
      */
-    async uploadRoomTypeImages(
+    async uploadVehicleTypeImages(
         files: any[],
-        roomTypeId: number,
+        vehicleTypeId: number,
     ): Promise<CloudinaryUploadResult[]> {
-        return await this.uploadMultipleFiles(files, HotelUploadType.ROOM_TYPE_IMAGE, {
-            entityId: roomTypeId,
-            entityType: 'room_type',
-            tags: ['room_type', 'hotel'],
-            context: { room_type_id: roomTypeId },
+        return await this.uploadMultipleFiles(files, CarRentalUploadType.VEHICLE_TYPE_IMAGE, {
+            entityId: vehicleTypeId,
+            entityType: 'vehicle_type',
+            tags: ['vehicle_type', 'car-rental'],
+            context: { vehicle_type_id: vehicleTypeId },
         });
     }
 
@@ -466,7 +466,7 @@ export class CloudinaryService {
         bookingId: number,
         documentDescription?: string,
     ): Promise<CloudinaryUploadResult> {
-        return await this.uploadFile(file, HotelUploadType.BOOKING_DOCUMENT, {
+        return await this.uploadFile(file, CarRentalUploadType.BOOKING_DOCUMENT, {
             entityId: bookingId,
             entityType: 'booking',
             tags: ['booking', 'document'],
@@ -603,7 +603,7 @@ export class CloudinaryService {
             const publicId = fileWithExtension.split('.')[0];
 
             // Reconstruct full public_id with folder path if needed
-            const folderParts = parts.slice(parts.indexOf('hotel-management'));
+            const folderParts = parts.slice(parts.indexOf('car-rental-app'));
             folderParts[folderParts.length - 1] = publicId;
 
             return folderParts.join('/');

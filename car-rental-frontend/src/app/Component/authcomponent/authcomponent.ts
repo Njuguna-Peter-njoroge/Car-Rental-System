@@ -96,7 +96,14 @@ export class AuthComponent implements OnInit {
           this.isLoading = false;
           this.successMessage = 'Login successful! Redirecting...';
           setTimeout(() => {
-            this.router.navigate(['/landing']);
+            const user = response.user;
+            console.log('Logged in user:', user);
+            console.log('User role:', user?.role);
+            if (user && user.role && user.role.toLowerCase() === 'admin') {
+              this.router.navigate(['/admin']);
+            } else {
+              this.router.navigate(['/users/carspage']);
+            }
           }, 1000);
         },
         error: (error) => {
@@ -140,10 +147,8 @@ export class AuthComponent implements OnInit {
       this.authService.register(signupData).subscribe({
         next: (response) => {
           this.isLoading = false;
-          this.successMessage = 'Registration successful! Please check your email for verification.';
-          setTimeout(() => {
-            this.router.navigate(['/landing']);
-          }, 2000);
+          this.successMessage = 'Registration successful! Please log in to continue.';
+          this.switchTab('login');
         },
         error: (error) => {
           this.isLoading = false;
