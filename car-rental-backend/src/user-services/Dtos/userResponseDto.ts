@@ -8,5 +8,5 @@ export class UserResponseDto {
   createdAt: Date;
   updatedAt: Date;
   Status: Status;
-  profileImage: string;
+  profileImage: string | null;
 }

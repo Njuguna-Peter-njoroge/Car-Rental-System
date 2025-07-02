@@ -121,7 +121,15 @@ export class UsersComponent implements OnInit {
         (this.selectedPrice === '40000-60000' && vehicle.dailyRate > 40000 && vehicle.dailyRate <= 60000) ||
         (this.selectedPrice === '60000-80000' && vehicle.dailyRate > 60000 && vehicle.dailyRate <= 80000) ||
         (this.selectedPrice === '80000+' && vehicle.dailyRate > 80000);
-      const matchesSearch = !this.searchText || vehicle.model.toLowerCase().includes(this.searchText.toLowerCase());
+
+      let matchesSearch = true;
+      if (this.searchText) {
+        const search = this.searchText.toLowerCase();
+        matchesSearch =
+          vehicle.model.toLowerCase().includes(search) ||
+          vehicle.category.toLowerCase().includes(search) ||
+          vehicle.location.toLowerCase().includes(search);
+      }
 
       return (
         matchesCategory &&
