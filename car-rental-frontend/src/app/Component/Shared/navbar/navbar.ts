@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { RouterModule, Router } from '@angular/router';
 import { AuthService, User } from '../../../services/auth.service';
 import { Subscription } from 'rxjs';
 
@@ -20,7 +20,10 @@ export class NavbarComponent implements OnInit, OnDestroy {
   private authSubscription: Subscription | null = null;
   private userSubscription: Subscription | null = null;
 
-  constructor(private authService: AuthService) {}
+  constructor(
+    private authService: AuthService,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
     // Subscribe to authentication state changes
@@ -56,7 +59,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
   logout(): void {
     this.authService.logout();
     this.isDropdownOpen = false;
-    // Redirect to login page
-    window.location.href = '/auth';
+    // Redirect to login page using router
+    this.router.navigate(['/auth']);
   }
 }

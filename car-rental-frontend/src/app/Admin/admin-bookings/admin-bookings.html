@@ -1,0 +1,152 @@
+<app-navbar></app-navbar>
+
+<div class="admin-bookings-container">
+  <div class="header">
+    <h1>Admin Bookings Management</h1>
+    <p>View and manage all car rental bookings</p>
+  </div>
+
+  <div class="content">
+    <div class="stats-section">
+      <div class="stat-card">
+        <div class="stat-number">{{ getTotalBookings() }}</div>
+        <div class="stat-label">Total Bookings</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">{{ getStatusCount('PENDING') }}</div>
+        <div class="stat-label">Pending</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">{{ getStatusCount('CONFIRMED') }}</div>
+        <div class="stat-label">Confirmed</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">{{ getStatusCount('COMPLETED') }}</div>
+        <div class="stat-label">Completed</div>
+      </div>
+    </div>
+
+    <div class="filters-section">
+      <div class="filter-group">
+        <label for="statusFilter">Filter by Status:</label>
+        <select id="statusFilter" [(ngModel)]="statusFilter" class="filter-select">
+          <option value="ALL">All Bookings</option>
+          <option value="PENDING">Pending</option>
+          <option value="CONFIRMED">Confirmed</option>
+          <option value="CANCELLED">Cancelled</option>
+          <option value="COMPLETED">Completed</option>
+        </select>
+      </div>
+    </div>
+
+    <div *ngIf="isLoading" class="loading">
+      <div class="spinner"></div>
+      <p>Loading bookings...</p>
+    </div>
+
+    <div *ngIf="error" class="error-message">
+      <p>{{ error }}</p>
+    </div>
+
+    <div *ngIf="!isLoading && !error && getFilteredBookings().length === 0" class="no-bookings">
+      <div class="no-bookings-icon">📋</div>
+      <h3>No bookings found</h3>
+      <p *ngIf="statusFilter === 'ALL'">No bookings have been made yet.</p>
+      <p *ngIf="statusFilter !== 'ALL'">No {{ statusFilter.toLowerCase() }} bookings found.</p>
+    </div>
+
+    <div *ngIf="!isLoading && !error && getFilteredBookings().length > 0" class="bookings-list">
+      <div class="booking-card" *ngFor="let booking of getFilteredBookings()">
+        <div class="booking-header">
+          <div class="booking-info">
+            <div class="booking-id">Booking #{{ booking.id.slice(0, 8) }}</div>
+            <div class="booking-date">Created: {{ formatDate(booking.createdAt) }}</div>
+          </div>
+          <div class="status-section">
+            <span class="status-badge" [class]="getStatusClass(booking.status)">
+              {{ getStatusText(booking.status) }}
+            </span>
+          </div>
+        </div>
+
+        <div class="booking-content">
+          <div class="vehicle-section">
+            <img [src]="booking.vehicle.images[0] || 'assets/default-car.jpg'" [alt]="booking.vehicle.model" class="vehicle-image">
+            <div class="vehicle-details">
+              <h3>{{ booking.vehicle.model }} ({{ booking.vehicle.year }})</h3>
+              <p class="vehicle-category">{{ booking.vehicle.category }}</p>
+              <p class="daily-rate">${{ booking.vehicle.dailyRate }}/day</p>
+            </div>
+          </div>
+
+          <div class="user-section">
+            <h4>Customer Information</h4>
+            <p><strong>Name:</strong> {{ getUserName(booking.user) }}</p>
+            <p><strong>Email:</strong> {{ booking.user.email }}</p>
+          </div>
+
+          <div class="booking-details">
+            <div class="detail-grid">
+              <div class="detail-item">
+                <span class="label">Pickup Date:</span>
+                <span class="value">{{ formatDate(booking.startDate) }}</span>
+              </div>
+              <div class="detail-item">
+                <span class="label">Return Date:</span>
+                <span class="value">{{ formatDate(booking.endDate) }}</span>
+              </div>
+              <div class="detail-item">
+                <span class="label">Duration:</span>
+                <span class="value">{{ calculateDuration(booking.startDate, booking.endDate) }} days</span>
+              </div>
+              <div class="detail-item">
+                <span class="label">Total Amount:</span>
+                <span class="value amount">${{ booking.totalAmount }}</span>
+              </div>
+              <div class="detail-item">
+                <span class="label">Pickup Location:</span>
+                <span class="value">{{ booking.pickupLocation }}</span>
+              </div>
+              <div class="detail-item">
+                <span class="label">Return Location:</span>
+                <span class="value">{{ booking.returnLocation }}</span>
+              </div>
+            </div>
+
+            <div *ngIf="booking.notes" class="notes-section">
+              <span class="label">Notes:</span>
+              <p class="notes">{{ booking.notes }}</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="booking-actions">
+          <button 
+            *ngIf="booking.status === 'PENDING'" 
+            (click)="approveBooking(booking.id)" 
+            class="approve-btn">
+            ✅ Approve
+          </button>
+          <button 
+            *ngIf="booking.status === 'PENDING'" 
+            (click)="rejectBooking(booking.id)" 
+            class="reject-btn">
+            ❌ Reject
+          </button>
+          <button 
+            *ngIf="booking.status === 'CONFIRMED'" 
+            (click)="completeBooking(booking.id)" 
+            class="complete-btn">
+            ✅ Mark Complete
+          </button>
+          <span *ngIf="booking.status === 'CANCELLED'" class="cancelled-text">
+            Booking Cancelled
+          </span>
+          <span *ngIf="booking.status === 'COMPLETED'" class="completed-text">
+            Booking Completed
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div> 

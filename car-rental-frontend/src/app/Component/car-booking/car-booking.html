@@ -1,30 +1,115 @@
-<app-navbar></app-navbar>
-<div class="booking-container">
-  <h2>Book a Car</h2>
+<!-- Banner Section -->
+<div class="banner" style="background-image: url('/assets/images/sports.avif')">
+  <div class="banner-content">
+    <h1>Luxury Car Rental</h1>
+    <p>Experience the thrill of driving premium vehicles</p>
+  </div>
+</div>
 
-  <form (ngSubmit)="submitBooking()" #bookingForm="ngForm">
-    <mat-form-field appearance="fill">
-      <mat-label>Full Name</mat-label>
-      <input matInput name="fullName" [(ngModel)]="booking.fullName" required />
-    </mat-form-field>
+<!-- Main Booking Section -->
+<div class="booking-section">
+  <!-- Car Image Sidebar -->
+  <div class="car-image-container">
+    <img src="/assets/images/sports.avif" alt="Sports Car" class="car-image" />
+    <div class="car-info">
+      <div><i class="fa fa-wheelchair"></i> 2 Seats</div>
+      <div><i class="fa fa-calendar"></i> Duration: 7 Days</div>
+      <div><i class="fa fa-clock"></i> 10% Discount</div>
+    </div>
+  </div>
 
-    <mat-form-field appearance="fill">
-      <mat-label>Email</mat-label>
-      <input matInput type="email" name="email" [(ngModel)]="booking.email" required />
-    </mat-form-field>
+  <!-- Booking Form -->
+  <div class="booking-form-container">
+    <div class="price-tag">$298.00 <span>Sports Car</span></div>
+    <h2>Book a Car</h2>
+    <p>Find your dream car today</p>
 
-    <mat-form-field appearance="fill">
-      <mat-label>Booking Date</mat-label>
-      <input matInput [matDatepicker]="picker" name="bookingDate" [(ngModel)]="booking.bookingDate" required />
-      <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-      <mat-datepicker #picker></mat-datepicker>
-    </mat-form-field>
+    <!-- Authentication Check -->
+    <div *ngIf="!isAuthenticated" class="auth-prompt">
+      <div class="auth-message">
+        <i class="fas fa-lock"></i>
+        <h3>Login Required</h3>
+        <p>Please login to make a booking</p>
+        <a routerLink="/auth" class="btn btn-primary">
+          <i class="fas fa-sign-in-alt"></i> Login Now
+        </a>
+      </div>
+    </div>
 
-    <mat-form-field appearance="fill">
-      <mat-label>Car Model</mat-label>
-      <input matInput name="carModel" [(ngModel)]="booking.carModel" required />
-    </mat-form-field>
+    <!-- Booking Form - Only show when authenticated -->
+    <form *ngIf="isAuthenticated" (ngSubmit)="submitBooking()">
+      <div class="form-group">
+        <label for="startDate">Start Date</label>
+        <input 
+          type="date" 
+          id="startDate"
+          [(ngModel)]="bookingData.startDate" 
+          name="startDate" 
+          required 
+        />
+      </div>
 
-    <button mat-raised-button color="primary" type="submit" [disabled]="!bookingForm.valid">Submit Booking</button>
-  </form>
+      <div class="form-group">
+        <label for="endDate">End Date</label>
+        <input 
+          type="date" 
+          id="endDate"
+          [(ngModel)]="bookingData.endDate" 
+          name="endDate" 
+          required 
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="pickupLocation">Pickup Location</label>
+        <input 
+          type="text" 
+          id="pickupLocation"
+          [(ngModel)]="bookingData.pickupLocation" 
+          name="pickupLocation" 
+          placeholder="e.g., Los Angeles Airport" 
+          required 
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="returnLocation">Return Location</label>
+        <input 
+          type="text" 
+          id="returnLocation"
+          [(ngModel)]="bookingData.returnLocation" 
+          name="returnLocation" 
+          placeholder="e.g., Los Angeles Downtown" 
+          required 
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="notes">Additional Notes (Optional)</label>
+        <textarea 
+          id="notes"
+          [(ngModel)]="bookingData.notes" 
+          name="notes" 
+          placeholder="Any special requirements or requests..." 
+          rows="3"
+        ></textarea>
+      </div>
+
+      <div class="form-group">
+        <label for="couponCode">Coupon Code (Optional)</label>
+        <input 
+          type="text" 
+          id="couponCode"
+          [(ngModel)]="bookingData.couponCode" 
+          name="couponCode" 
+          placeholder="Enter coupon code for discounts" 
+        />
+      </div>
+
+      <button type="submit" [disabled]="isSubmitting">
+        <span *ngIf="isSubmitting" class="loading"></span>
+        {{ isSubmitting ? 'Submitting...' : 'Submit Booking' }}
+      </button>
+    </form>
+  </div>
 </div>

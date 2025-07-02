@@ -2,9 +2,11 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
 import { NavbarComponent } from '../../Component/Shared/navbar/navbar';
 import { VehicleService, Vehicle } from '../../services/vehicle.service';
 import { AuthService } from '../../services/auth.service';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-admin-dashboard',
@@ -27,7 +29,8 @@ export class AdminDashboardComponent implements OnInit {
     private fb: FormBuilder,
     private vehicleService: VehicleService,
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private http: HttpClient
   ) {
     this.vehicleForm = this.fb.group({
       model: ['', [Validators.required]],
@@ -83,14 +86,49 @@ export class AdminDashboardComponent implements OnInit {
       this.isUploading = true;
       this.imageUrl = '';
       
-      // For now, create a local URL for preview
-      // In production, you'd upload to Cloudinary here
-      const reader = new FileReader();
-      reader.onload = (e: any) => {
-        this.imageUrl = e.target.result;
+      // Check file size (max 8MB for vehicle images)
+      const maxSize = 8 * 1024 * 1024; // 8MB
+      if (file.size > maxSize) {
+        this.showMessage('Image file size must be less than 8MB', 'error');
         this.isUploading = false;
-      };
-      reader.readAsDataURL(file);
+        return;
+      }
+
+      // Check file type
+      const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+      if (!allowedTypes.includes(file.type)) {
+        this.showMessage('Please select a valid image file (JPEG, PNG, or WebP)', 'error');
+        this.isUploading = false;
+        return;
+      }
+
+      // Create FormData for file upload
+      const formData = new FormData();
+      formData.append('file', file);
+
+      // Upload to Cloudinary via backend
+      const token = this.authService.getToken();
+      this.http.post(`${environment.apiUrl}/upload/test-upload`, formData, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      }).subscribe({
+        next: (response: any) => {
+          if (response.success && response.data) {
+            this.imageUrl = response.data.secure_url || response.data.url;
+            this.showMessage('Image uploaded successfully!', 'success');
+          } else {
+            this.showMessage('Failed to upload image', 'error');
+          }
+        },
+        error: (error) => {
+          console.error('Error uploading image:', error);
+          this.showMessage('Failed to upload image. Please try again.', 'error');
+        },
+        complete: () => {
+          this.isUploading = false;
+        }
+      });
     }
   }
 
@@ -102,7 +140,7 @@ export class AdminDashboardComponent implements OnInit {
       const vehicleData = {
         ...formValue,
         features: formValue.features ? formValue.features.split(',').map((f: string) => f.trim()) : [],
-        images: [this.imageUrl], // In production, this would be the Cloudinary URL
+        images: [this.imageUrl], // Now this is a Cloudinary URL
         isAvailable: true,
         status: 'ACTIVE'
       };

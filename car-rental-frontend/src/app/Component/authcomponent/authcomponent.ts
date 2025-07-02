@@ -62,7 +62,12 @@ export class AuthComponent implements OnInit {
   ngOnInit(): void {
     // Check if user is already authenticated
     if (this.authService.isAuthenticated()) {
-      this.router.navigate(['/landing']);
+      const user = this.authService.getCurrentUser();
+      if (user && user.role && user.role.toLowerCase() === 'admin') {
+        this.router.navigate(['/admin']);
+      } else {
+        this.router.navigate(['/users/carspage']);
+      }
     }
   }
 
@@ -92,11 +97,11 @@ export class AuthComponent implements OnInit {
       };
 
       this.authService.login(loginData).subscribe({
-        next: (response: any) => {
+        next: (response) => {
           this.isLoading = false;
           this.successMessage = 'Login successful! Redirecting...';
           setTimeout(() => {
-            const user = response.data?.user;
+            const user = response.user;
             console.log('Logged in user:', user);
             console.log('User role:', user?.role);
             if (user && user.role && user.role.toLowerCase() === 'admin') {

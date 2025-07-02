@@ -1,48 +1,100 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import {FormsModule} from '@angular/forms';
-import {MatFormFieldModule} from '@angular/material/form-field';
-import {MatInputModule} from '@angular/material/input';
-import {MatButtonModule} from '@angular/material/button';
-import {MatDatepickerModule} from '@angular/material/datepicker';
-import {MatNativeDateModule} from '@angular/material/core';
-import {NavbarComponent} from '../Shared/navbar/navbar';
-import {MatDatepicker, MatDatepickerInput, MatDatepickerToggle} from '@angular/material/datepicker';
-import {MatIconModule} from '@angular/material/icon';
+import { FormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
-  selector: 'app-booking',
+  selector: 'app-car-detail',
   templateUrl: './car-booking.html',
   styleUrls: ['./car-booking.css'],
-  imports: [
-    FormsModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatButtonModule,
-    MatDatepickerModule,
-    MatNativeDateModule,
-    NavbarComponent,
-    MatDatepickerToggle,
-    MatDatepicker,
-    MatDatepickerInput,
-    MatIconModule,
-  ]
+  imports: [FormsModule, CommonModule, RouterModule]
 })
-export class BookingComponent {
-  booking = {
-    fullName: '',
-    email: '',
-    bookingDate: '',
-    carModel: ''
+export class CarDetailComponent implements OnInit {
+  constructor(
+    private http: HttpClient,
+    private authService: AuthService
+  ) {}
+
+  bookingData = {
+    vehicleId: '30984705-ede0-40c5-9b89-11c6681329ab', // Use available vehicle ID
+    startDate: '',
+    endDate: '',
+    pickupLocation: '',
+    returnLocation: '',
+    notes: '',
+    couponCode: ''
   };
 
-  constructor(private http: HttpClient) {}
+  isSubmitting = false;
+  isAuthenticated = false;
+
+  ngOnInit() {
+    console.log('CarDetailComponent loaded');
+    this.isAuthenticated = this.authService.isAuthenticated();
+  }
 
   submitBooking() {
-    const apiUrl = 'http://localhost:3000/bookings'; // Replace with your NestJS endpoint
-    this.http.post(apiUrl, this.booking).subscribe({
-      next: () => alert('Booking submitted successfully!'),
-      error: err => alert('Error submitting booking: ' + err.message),
-    });
+    // Check if user is authenticated
+    if (!this.isAuthenticated) {
+      alert('Please login first to make a booking.');
+      return;
+    }
+
+    // Check if required fields are filled
+    const requiredFields = ['startDate', 'endDate', 'pickupLocation', 'returnLocation'];
+    const isComplete = requiredFields.every(field => this.bookingData[field as keyof typeof this.bookingData]?.toString().trim() !== '');
+
+    if (isComplete) {
+      this.isSubmitting = true;
+      console.log('Sending booking request to backend:', this.bookingData);
+      
+      // Get auth token from auth service
+      const token = this.authService.getToken();
+      
+      if (!token) {
+        alert('Please login first to make a booking.');
+        this.isSubmitting = false;
+        return;
+      }
+
+      // Send booking request to backend with auth header
+      this.http.post('http://localhost:3000/bookings', this.bookingData, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      })
+        .subscribe({
+          next: (response) => {
+            console.log('Booking request successful:', response);
+            alert('Booking submitted successfully! We will contact you soon.');
+            
+            // Reset form
+            this.bookingData = {
+              vehicleId: '30984705-ede0-40c5-9b89-11c6681329ab',
+              startDate: '',
+              endDate: '',
+              pickupLocation: '',
+              returnLocation: '',
+              notes: '',
+              couponCode: ''
+            };
+            this.isSubmitting = false;
+          },
+          error: (error) => {
+            console.error('Booking request failed:', error);
+            if (error.status === 401) {
+              alert('Please login first to make a booking.');
+            } else {
+              alert('Booking submission failed. Please try again.');
+            }
+            this.isSubmitting = false;
+          }
+        });
+    } else {
+      alert('Please fill in all required fields (Start Date, End Date, Pickup Location, Return Location).');
+    }
   }
 }

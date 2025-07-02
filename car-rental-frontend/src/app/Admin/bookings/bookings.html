@@ -1,1 +1,23 @@
-<p>bookings works!</p>
+<div class="dashboard-container">
+  <h2>Booking Requests</h2>
+  <table>
+    <thead>
+    <tr>
+      <th>Name</th><th>Email</th><th>Pick-up</th><th>Drop-off</th><th>Status</th><th>Action</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let booking of bookings">
+      <td>{{ booking.firstName }} {{ booking.lastName }}</td>
+      <td>{{ booking.email }}</td>
+      <td>{{ booking.pickUpDate | date }}</td>
+      <td>{{ booking.dropOffDate | date }}</td>
+      <td>{{ booking.status }}</td>
+      <td>
+        <button (click)="updateStatus(booking.id, 'APPROVED')" [disabled]="booking.status !== 'PENDING'">Approve</button>
+        <button (click)="updateStatus(booking.id, 'DENIED')" [disabled]="booking.status !== 'PENDING'">Deny</button>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+</div>

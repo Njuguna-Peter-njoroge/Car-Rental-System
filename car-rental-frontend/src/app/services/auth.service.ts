@@ -10,8 +10,9 @@ export interface User {
   email: string;
   role: string;
   profileImage?: string;
-  isEmailVerified: boolean;
-  status: string;
+  isEmailVerified?: boolean;
+  status?: string;
+  Status?: string; // Backend uses capital S
 }
 
 export interface LoginRequest {
@@ -80,8 +81,15 @@ export class AuthService {
   login(credentials: LoginRequest): Observable<AuthResponse> {
     return this.http.post<any>(`${this.apiUrl}/auth/login`, credentials)
       .pipe(
-        tap(response => {
-          this.setSession(response.data);
+        map(response => {
+          // Transform the response to match our interface
+          const authResponse: AuthResponse = {
+            user: response.data.user,
+            accessToken: response.data.access_token,
+            refreshToken: response.data.refresh_token
+          };
+          this.setSession(authResponse);
+          return authResponse;
         }),
         catchError(this.handleError)
       );
@@ -90,8 +98,15 @@ export class AuthService {
   register(userData: RegisterRequest): Observable<AuthResponse> {
     return this.http.post<any>(`${this.apiUrl}/auth/register`, userData)
       .pipe(
-        tap(response => {
-          this.setSession(response.data);
+        map(response => {
+          // Transform the response to match our interface
+          const authResponse: AuthResponse = {
+            user: response.data.user,
+            accessToken: response.data.access_token,
+            refreshToken: response.data.refresh_token
+          };
+          this.setSession(authResponse);
+          return authResponse;
         }),
         catchError(this.handleError)
       );
@@ -186,11 +201,11 @@ export class AuthService {
     return user?.isEmailVerified || false;
   }
 
-  private setSession(data: any): void {
-    localStorage.setItem('currentUser', JSON.stringify(data.user));
-    localStorage.setItem('accessToken', data.access_token);
-    localStorage.setItem('refreshToken', data.refresh_token);
-    this.currentUserSubject.next(data.user);
+  private setSession(response: AuthResponse): void {
+    localStorage.setItem('currentUser', JSON.stringify(response.user));
+    localStorage.setItem('accessToken', response.accessToken);
+    localStorage.setItem('refreshToken', response.refreshToken);
+    this.currentUserSubject.next(response.user);
     this.isAuthenticatedSubject.next(true);
   }
 

@@ -1,6 +1,8 @@
 ### Environment Variables
 @baseUrl = http://localhost:3000
-@authToken = Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI3YjRiNTJlNC1iNDRkLTQxMmUtYWNjZi1kNGEzZGQ3MmIwNWYiLCJlbWFpbCI6Im5qdWd1bmFocGV0ZXJuam9yb2dlQGdtYWlsLmNvbSIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc1MTIzNDE0NywiZXhwIjoxNzUxMzIwNTQ3fQ.vMcfy0RoX39xVv5HhEqZk88lbHCY9RQAF31D0SI1yPE
+@authToken = Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2YzgzM2RhZC04YzI0LTQxYzYtYWUwYi1hZTRjNWYwYWQzYjgiLCJlbWFpbCI6ImRldnBldGVybmpvcm9nZUBnbWFpbC5jb20iLCJyb2xlIjoiQURNSU4iLCJpYXQiOjE3NTE0MjE2NTgsImV4cCI6MTc1MTUwODA1OH0.8kgq4xQJ9Ad3IQKmPQGUyo3xardvIPJVLte-9QsRjsY
+@vehicleId = 30984705-ede0-40c5-9b89-11c6681329ab
+@bookingId = 7b2c5dc2-4d86-4e4a-885b-40533a4e8f06
 
 ### Booking & Reservation API Testing
 ### Base URL: {{baseUrl}}/bookings
@@ -9,10 +11,10 @@
 ### 1. Create a New Booking
 POST {{baseUrl}}/bookings
 Content-Type: application/json
-Authorization: Bearer {{authToken}}
+Authorization: {{authToken}}
 
 {
-  "vehicleId": "{{vehicleId}}",
+  "vehicleId": "30984705-ede0-40c5-9b89-11c6681329ab",
   "startDate": "2025-07-01T10:00:00.000Z",
   "endDate": "2025-07-03T18:00:00.000Z",
   "pickupLocation": "New York Airport",
@@ -23,28 +25,28 @@ Authorization: Bearer {{authToken}}
 
 ### 2. Get All Bookings (Admin/Agent)
 GET {{baseUrl}}/bookings
-Authorization: Bearer {{authToken}}
+Authorization: {{authToken}}
 
 ### 3. Get All Bookings with Filters
 GET {{baseUrl}}/bookings?status=PENDING&page=1&limit=10
-Authorization: Bearer {{authToken}}
+Authorization: {{authToken}}
 
 ### 4. Get My Bookings (Current User)
 GET {{baseUrl}}/bookings/me
-Authorization: Bearer {{authToken}}
+Authorization: {{authToken}}
 
 ### 5. Get My Bookings with Filters
 GET {{baseUrl}}/bookings/me?status=CONFIRMED&page=1&limit=5
-Authorization: Bearer {{authToken}}
+Authorization: {{authToken}}
 
 ### 6. Get Specific Booking by ID
 GET {{baseUrl}}/bookings/{{bookingId}}
-Authorization: Bearer {{authToken}}
+Authorization: {{authToken}}
 
 ### 7. Update Booking (Modify)
 PATCH {{baseUrl}}/bookings/{{bookingId}}
 Content-Type: application/json
-Authorization: Bearer {{authToken}}
+Authorization: {{authToken}}
 
 {
   "startDate": "2025-07-02T10:00:00.000Z",
@@ -57,7 +59,7 @@ Authorization: Bearer {{authToken}}
 ### 8. Update Booking Status (Admin/Agent)
 PATCH {{baseUrl}}/bookings/{{bookingId}}
 Content-Type: application/json
-Authorization: Bearer {{authToken}}
+Authorization: {{authToken}}
 
 {
   "status": "CONFIRMED"
@@ -65,47 +67,47 @@ Authorization: Bearer {{authToken}}
 
 ### 9. Cancel Booking
 DELETE {{baseUrl}}/bookings/{{bookingId}}
-Authorization: Bearer {{authToken}}
+Authorization: {{authToken}}
 
 ### 10. Search Bookings by Date Range
 GET {{baseUrl}}/bookings?startDate=2025-07-01T00:00:00.000Z&endDate=2025-07-31T23:59:59.000Z
-Authorization: Bearer {{authToken}}
+Authorization: {{authToken}}
 
 ### 11. Search Bookings by Vehicle
 GET {{baseUrl}}/bookings?vehicleId={{vehicleId}}
-Authorization: Bearer {{authToken}}
+Authorization: {{authToken}}
 
 ### 12. Search Bookings by Location
 GET {{baseUrl}}/bookings?pickupLocation=New York
-Authorization: Bearer {{authToken}}
+Authorization: {{authToken}}
 
 ### 13. Get Bookings by Status
 GET {{baseUrl}}/bookings?status=PENDING
-Authorization: Bearer {{authToken}}
+Authorization: {{authToken}}
 
 GET {{baseUrl}}/bookings?status=CONFIRMED
-Authorization: Bearer {{authToken}}
+Authorization: {{authToken}}
 
 GET {{baseUrl}}/bookings?status=CANCELLED
-Authorization: Bearer {{authToken}}
+Authorization: {{authToken}}
 
 GET {{baseUrl}}/bookings?status=COMPLETED
-Authorization: Bearer {{authToken}}
+Authorization: {{authToken}}
 
 ### 14. Pagination Example
 GET {{baseUrl}}/bookings?page=1&limit=5
-Authorization: Bearer {{authToken}}
+Authorization: {{authToken}}
 
 ### 15. Complex Search Example
 GET {{baseUrl}}/bookings?status=CONFIRMED&pickupLocation=New York&page=1&limit=10
-Authorization: Bearer {{authToken}}
+Authorization: {{authToken}}
 
 ### Sample Booking Data for Testing:
 
 ### Create Booking - Sedan
 POST {{baseUrl}}/bookings
 Content-Type: application/json
-Authorization: Bearer {{authToken}}
+Authorization: {{authToken}}
 
 {
   "vehicleId": "b9290c0e-c4e5-4741-bab8-c5f11b7c16e7",
@@ -119,7 +121,7 @@ Authorization: Bearer {{authToken}}
 ### Create Booking - SUV
 POST {{baseUrl}}/bookings
 Content-Type: application/json
-Authorization: Bearer {{authToken}}
+Authorization: {{authToken}}
 
 {
   "vehicleId": "c8f9d1a2-b3e4-5678-9abc-def012345678",
@@ -133,7 +135,7 @@ Authorization: Bearer {{authToken}}
 ### Create Booking - Economy
 POST {{baseUrl}}/bookings
 Content-Type: application/json
-Authorization: Bearer {{authToken}}
+Authorization: {{authToken}}
 
 {
   "vehicleId": "d1e2f3a4-b5c6-7890-1234-567890abcdef",
