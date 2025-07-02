@@ -331,4 +331,47 @@ export class UploadController {
       throw new BadRequestException('File deletion failed: ' + error.message);
     }
   }
+
+  @Post()
+  @UseInterceptors(FileInterceptor('file'))
+  @ApiOperation({ summary: 'Upload a file to Cloudinary' })
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        file: {
+          type: 'string',
+          format: 'binary',
+        },
+      },
+    },
+  })
+  @ApiResponse({ status: 201, description: 'File uploaded successfully' })
+  async uploadFile(@UploadedFile() file: any) {
+    if (!file) {
+      throw new BadRequestException('No file provided');
+    }
+
+    try {
+      const result = await this.cloudinaryService.uploadFile(
+        file,
+        CarRentalUploadType.USER_PROFILE,
+        {
+          entityType: 'user',
+          tags: ['profile-upload'],
+        },
+      );
+
+      return {
+        success: true,
+        message: 'File uploaded successfully',
+        url: result.secure_url,
+        data: result,
+      };
+    } catch (error) {
+      this.logger.error('File upload failed:', error);
+      throw new BadRequestException('Upload failed: ' + error.message);
+    }
+  }
 } 

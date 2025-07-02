@@ -40,7 +40,7 @@ export class UserBookingsComponent implements OnInit {
   bookings: Booking[] = [];
   isLoading = false;
   error = '';
-  userId = '';
+  userId: string | null = '';
 
   constructor(
     private http: HttpClient,
@@ -61,15 +61,11 @@ export class UserBookingsComponent implements OnInit {
     this.error = '';
 
     const token = this.authService.getToken();
-    this.http.get<{success: boolean, data: Booking[], message: string}>(`${environment.apiUrl}/bookings/user/${this.userId}`, {
+    this.http.get<Booking[]>(`${environment.apiUrl}/bookings/me`, {
       headers: { 'Authorization': `Bearer ${token}` }
     }).subscribe({
       next: (response) => {
-        if (response.success) {
-          this.bookings = response.data;
-        } else {
-          this.error = response.message || 'Failed to load bookings';
-        }
+        this.bookings = response;
       },
       error: (error) => {
         console.error('Error loading bookings:', error);
@@ -121,16 +117,12 @@ export class UserBookingsComponent implements OnInit {
   cancelBooking(bookingId: string): void {
     if (confirm('Are you sure you want to cancel this booking?')) {
       const token = this.authService.getToken();
-      this.http.patch<{success: boolean, message: string}>(`${environment.apiUrl}/bookings/${bookingId}/cancel`, {}, {
+      this.http.delete<{success: boolean, message: string}>(`${environment.apiUrl}/bookings/${bookingId}`, {
         headers: { 'Authorization': `Bearer ${token}` }
       }).subscribe({
         next: (response) => {
-          if (response.success) {
-            this.loadBookings(); // Reload bookings
-            alert('Booking cancelled successfully');
-          } else {
-            alert(response.message || 'Failed to cancel booking');
-          }
+          this.loadBookings(); // Reload bookings
+          alert('Booking cancelled successfully');
         },
         error: (error) => {
           console.error('Error cancelling booking:', error);

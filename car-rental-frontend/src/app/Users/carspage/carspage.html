@@ -59,8 +59,6 @@
         </option>
       </select>
 
-
-
       <select [(ngModel)]="selectedFuel" (change)="filterVehicles()">
         <option value="">All Fuel Types</option>
         <option *ngFor="let fuel of fuelTypes" [value]="fuel">
@@ -99,64 +97,66 @@
     <!-- No results -->
     <p *ngIf="filteredVehicles.length === 0 && !isLoading" class="no-results">No vehicles match your filters.</p>
 
-    <!-- Filtered vehicle cards -->
+    <!-- Filtered vehicle cards - COMPACT LAYOUT -->
     <div class="body-container" *ngIf="!isLoading">
-      <div class="cards">
-        <div class="card-content" *ngFor="let vehicle of filteredVehicles">
+      <div class="cards" style="grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 15px;">
+        <div class="card-content" *ngFor="let vehicle of filteredVehicles" style="max-width: 280px; margin: 0 auto;">
           <!-- Vehicle Image -->
-          <div class="vehicle-image">
-            <img [src]="vehicle.images[0] || 'assets/default-car.jpg'"
+          <div class="vehicle-image" style="height: 160px;">
+            <img [src]="vehicle.images[0] || 'assets/images/default-profile.svg'"
                  [alt]="vehicle.model"
-                 (error)="onImageError($event)">
+                 (error)="onImageError($event)"
+                 style="width: 100%; height: 100%; object-fit: cover;">
             <div class="vehicle-status" [class.available]="vehicle.isAvailable" [class.unavailable]="!vehicle.isAvailable">
               {{ vehicle.isAvailable ? 'Available' : 'Unavailable' }}
             </div>
           </div>
 
-          <div class="header-content">
+          <div class="header-content" style="padding: 10px 12px 6px;">
             <div class="left">
-              <h3>{{ vehicle.model }} ({{ vehicle.year }})</h3>
-              <span class="vehicle-year">{{ vehicle.year }}</span>
+              <h3 style="font-size: 15px;">{{ vehicle.model }} ({{ vehicle.year }})</h3>
+              <span class="vehicle-year" style="font-size: 11px;">{{ vehicle.year }}</span>
             </div>
             <div class="right">
-              <div class="daily-rate">{{ vehicle.dailyRate | currency:'USD' }}/day</div>
+              <div class="daily-rate" style="font-size: 13px;">{{ vehicle.dailyRate | currency:'USD' }}/day</div>
             </div>
           </div>
 
-          <div class="body-content">
-            <p class="description" *ngIf="vehicle.description">{{ vehicle.description }}</p>
-            <div class="vehicle-specs">
-              <p><strong>Category:</strong> {{ vehicle.category }}</p>
-              <p><strong>Location:</strong> {{ vehicle.location }}</p>
-              <p><strong>Fuel:</strong> {{ vehicle.fuelType }}</p>
-              <p><strong>Transmission:</strong> {{ vehicle.transmission }}</p>
-              <p><strong>Seats:</strong> {{ vehicle.seats }}</p>
-              <p><strong>Mileage:</strong> {{ vehicle.mileage ? (vehicle.mileage | number) + ' miles' : 'N/A' }}</p>
-              <p><strong>Hourly Rate:</strong> {{ vehicle.hourlyRate ? (vehicle.hourlyRate | currency:'USD') + '/hour' : 'N/A' }}</p>
+          <div class="body-content" style="padding: 10px 12px; font-size: 12px;">
+            <p class="description" *ngIf="vehicle.description" style="font-size: 11px;">{{ vehicle.description }}</p>
+            <div class="vehicle-specs" style="margin-bottom: 8px;">
+              <p style="margin: 3px 0; font-size: 11px;"><strong>Category:</strong> {{ vehicle.category }}</p>
+              <p style="margin: 3px 0; font-size: 11px;"><strong>Location:</strong> {{ vehicle.location }}</p>
+              <p style="margin: 3px 0; font-size: 11px;"><strong>Fuel:</strong> {{ vehicle.fuelType }}</p>
+              <p style="margin: 3px 0; font-size: 11px;"><strong>Transmission:</strong> {{ vehicle.transmission }}</p>
+              <p style="margin: 3px 0; font-size: 11px;"><strong>Seats:</strong> {{ vehicle.seats }}</p>
+              <p style="margin: 3px 0; font-size: 11px;"><strong>Mileage:</strong> {{ vehicle.mileage ? (vehicle.mileage | number) + ' miles' : 'N/A' }}</p>
+              <p style="margin: 3px 0; font-size: 11px;"><strong>Hourly Rate:</strong> {{ vehicle.hourlyRate ? (vehicle.hourlyRate | currency:'USD') + '/hour' : 'N/A' }}</p>
             </div>
 
             <!-- Features -->
-            <div class="features" *ngIf="vehicle.features && vehicle.features.length > 0">
-              <strong>Features:</strong>
-              <div class="feature-tags">
-                <span class="feature-tag" *ngFor="let feature of vehicle.features">{{ feature }}</span>
+            <div class="features" *ngIf="vehicle.features && vehicle.features.length > 0" style="margin-bottom: 8px;">
+              <strong style="font-size: 11px;">Features:</strong>
+              <div class="feature-tags" style="gap: 3px; margin-top: 3px;">
+                <span class="feature-tag" *ngFor="let feature of vehicle.features" style="font-size: 9px; padding: 2px 5px;">{{ feature }}</span>
               </div>
             </div>
 
-            <p class="price"><strong>Daily Rate:</strong> {{ vehicle.dailyRate | currency:'USD' }}/day</p>
+            <p class="price" style="font-size: 13px; margin: 6px 0 0; padding: 6px;"><strong>Daily Rate:</strong> {{ vehicle.dailyRate | currency:'USD' }}/day</p>
           </div>
 
-          <div class="card-footer-content">
-            <div class="left">
-              <button class="btn-details" (click)="viewDetails(vehicle)">
-                <i class="fas fa-info-circle"></i> View Details
-              </button>
-            </div>
+          <div class="card-footer-content" style="padding: 10px 12px; background-color: #f8f9fa; border-top: 1px solid #eee;">
             <div class="right">
               <button class="btn-book"
                       (click)="bookNow(vehicle)"
-                      [disabled]="!vehicle.isAvailable">
-                <i class="fas fa-calendar-check"></i> Book Now
+                      [disabled]="!vehicle.isAvailable"
+                      [style.background-color]="vehicle.isAvailable ? '#18bc9c' : '#6c757d'"
+                      [style.cursor]="vehicle.isAvailable ? 'pointer' : 'not-allowed'"
+                      [style.opacity]="vehicle.isAvailable ? '1' : '0.6'"
+                      style="padding: 8px 16px; font-size: 13px; font-weight: 600; color: white; border: none; border-radius: 6px; transition: all 0.3s ease; min-width: 100px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);"
+                      onmouseover="if(this.disabled === false) { this.style.backgroundColor='#15a085'; this.style.transform='translateY(-1px)' }"
+                      onmouseout="if(this.disabled === false) { this.style.backgroundColor='#18bc9c'; this.style.transform='translateY(0)' }">
+                <i class="fas fa-calendar-check"></i> {{ vehicle.isAvailable ? 'Book Now' : 'Unavailable' }}
               </button>
             </div>
           </div>

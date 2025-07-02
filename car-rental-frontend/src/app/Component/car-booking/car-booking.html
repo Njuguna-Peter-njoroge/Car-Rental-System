@@ -39,6 +39,17 @@
     <!-- Booking Form - Only show when authenticated -->
     <form *ngIf="isAuthenticated" (ngSubmit)="submitBooking()">
       <div class="form-group">
+        <label for="vehicleId">Select Vehicle</label>
+        <select id="vehicleId" [(ngModel)]="bookingData.vehicleId" name="vehicleId" required>
+          <option value="" disabled selected>Select a vehicle</option>
+          <option *ngFor="let vehicle of vehicles" [value]="vehicle.id">
+            {{ vehicle.model }} ({{ vehicle.year }}) - {{ vehicle.category }}
+          </option>
+        </select>
+        <div *ngIf="vehicleFetchError" class="message error">{{ vehicleFetchError }}</div>
+      </div>
+
+      <div class="form-group">
         <label for="startDate">Start Date</label>
         <input 
           type="date" 

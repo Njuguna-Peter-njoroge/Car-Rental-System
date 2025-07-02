@@ -152,16 +152,22 @@ export class UsersComponent implements OnInit {
     this.router.navigate(['/vehicle-details', vehicle.id]);
   }
 
-  // Book vehicle
+  // Book vehicle - FIXED ROUTING
   bookNow(vehicle: Vehicle): void {
-    // Add booking notification
-    this.addNotification(`Booking request sent for ${vehicle.model}`, 'success');
+    console.log('🎯 Book Now button clicked for vehicle:', vehicle);
+    console.log('Vehicle ID:', vehicle.id);
+    console.log('Vehicle Name:', vehicle.model);
+    console.log('Vehicle Available:', vehicle.isAvailable);
     
-    // Navigate to booking page
+    // Add booking notification
+    this.addNotification(`Redirecting to booking page for ${vehicle.model}`, 'success');
+    
+    // Navigate to booking page with vehicle details
     this.router.navigate(['/booking'], { 
       queryParams: { 
         vehicleId: vehicle.id,
-        vehicleName: vehicle.model 
+        vehicleName: vehicle.model,
+        dailyRate: vehicle.dailyRate
       } 
     });
   }
@@ -197,7 +203,7 @@ export class UsersComponent implements OnInit {
   onImageError(event: Event): void {
     const target = event.target as HTMLImageElement;
     if (target) {
-      target.src = 'assets/default-car.jpg';
+      target.src = 'assets/images/default-profile.svg';
     }
   }
 }

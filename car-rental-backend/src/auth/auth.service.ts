@@ -37,6 +37,15 @@ export class AuthService {
 
     const user = await this.prisma.user.findUnique({
       where: { email: loginDto.email.toLowerCase() },
+      select: {
+        id: true,
+        email: true,
+        role: true,
+        name: true,
+        Status: true,
+        password: true,
+        profileImage: true,
+      },
     });
 
     if (!user) {
@@ -82,6 +91,7 @@ export class AuthService {
           role: user.role,
           name: user.name,
           Status: user.Status,
+          profileImage: user.profileImage
         },
       },
     };
@@ -117,6 +127,7 @@ export class AuthService {
           Status: true,
           createdAt: true,
           updatedAt: true,
+          profileImage: true,
         },
       });
 
@@ -168,8 +179,31 @@ export class AuthService {
     token: string,
     newPassword: string,
   ): Promise<ApiResponse<{ message: string }>> {
-    // For now, just return success message
-    // This will be implemented when the database schema is updated
+    // Find user by token and check expiry
+    const user = await this.prisma.user.findFirst({
+      where: {
+        passwordResetToken: token,
+        passwordResetExpires: { gte: new Date() },
+      },
+    });
+
+    if (!user) {
+      throw new BadRequestException('Invalid or expired reset token');
+    }
+
+    // Hash new password
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    // Update password and clear reset token
+    await this.prisma.user.update({
+      where: { id: user.id },
+      data: {
+        password: hashedPassword,
+        passwordResetToken: null,
+        passwordResetExpires: null,
+      },
+    });
+
     return {
       success: true,
       message: 'Password reset successful',

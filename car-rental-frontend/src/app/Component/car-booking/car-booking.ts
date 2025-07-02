@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
+import { VehicleService, Vehicle } from '../../services/vehicle.service';
 
 @Component({
   selector: 'app-car-detail',
@@ -14,11 +15,15 @@ import { AuthService } from '../../services/auth.service';
 export class CarDetailComponent implements OnInit {
   constructor(
     private http: HttpClient,
-    private authService: AuthService
+    private authService: AuthService,
+    private vehicleService: VehicleService
   ) {}
 
+  vehicles: Vehicle[] = [];
+  vehicleFetchError: string = '';
+
   bookingData = {
-    vehicleId: '30984705-ede0-40c5-9b89-11c6681329ab', // Use available vehicle ID
+    vehicleId: '',
     startDate: '',
     endDate: '',
     pickupLocation: '',
@@ -33,6 +38,23 @@ export class CarDetailComponent implements OnInit {
   ngOnInit() {
     console.log('CarDetailComponent loaded');
     this.isAuthenticated = this.authService.isAuthenticated();
+    this.fetchVehicles();
+  }
+
+  fetchVehicles() {
+    this.vehicleService.getAllVehicles().subscribe({
+      next: (response) => {
+        if (response.success && response.data.vehicles.length > 0) {
+          this.vehicles = response.data.vehicles;
+        } else {
+          this.vehicleFetchError = response.message || 'No vehicles found.';
+        }
+      },
+      error: (err) => {
+        this.vehicleFetchError = 'Failed to fetch vehicles.';
+        console.error('Vehicle fetch error:', err);
+      }
+    });
   }
 
   submitBooking() {
@@ -73,7 +95,7 @@ export class CarDetailComponent implements OnInit {
             
             // Reset form
             this.bookingData = {
-              vehicleId: '30984705-ede0-40c5-9b89-11c6681329ab',
+              vehicleId: '',
               startDate: '',
               endDate: '',
               pickupLocation: '',
@@ -87,8 +109,6 @@ export class CarDetailComponent implements OnInit {
             console.error('Booking request failed:', error);
             if (error.status === 401) {
               alert('Please login first to make a booking.');
-            } else {
-              alert('Booking submission failed. Please try again.');
             }
             this.isSubmitting = false;
           }

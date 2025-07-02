@@ -198,7 +198,12 @@ export class AuthService {
 
   isEmailVerified(): boolean {
     const user = this.getCurrentUser();
-    return user?.isEmailVerified || false;
+    return user?.isEmailVerified || user?.Status === 'VERIFIED' || false;
+  }
+
+  getUserId(): string | null {
+    const user = this.getCurrentUser();
+    return user?.id || null;
   }
 
   private setSession(response: AuthResponse): void {

@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
 import { NavbarComponent } from '../../Component/Shared/navbar/navbar';
@@ -38,7 +39,7 @@ interface Booking {
 @Component({
   selector: 'app-admin-bookings',
   standalone: true,
-  imports: [CommonModule, RouterModule, NavbarComponent],
+  imports: [CommonModule, FormsModule, RouterModule, NavbarComponent],
   templateUrl: './admin-bookings.html',
   styleUrls: ['./admin-bookings.css']
 })
@@ -67,15 +68,11 @@ export class AdminBookingsComponent implements OnInit {
     this.error = '';
 
     const token = this.authService.getToken();
-    this.http.get<{success: boolean, data: Booking[], message: string}>(`${environment.apiUrl}/bookings`, {
+    this.http.get<Booking[]>(`${environment.apiUrl}/bookings`, {
       headers: { 'Authorization': `Bearer ${token}` }
     }).subscribe({
       next: (response) => {
-        if (response.success) {
-          this.bookings = response.data;
-        } else {
-          this.error = response.message || 'Failed to load bookings';
-        }
+        this.bookings = response;
       },
       error: (error) => {
         console.error('Error loading bookings:', error);
@@ -151,17 +148,25 @@ export class AdminBookingsComponent implements OnInit {
 
   private updateBookingStatus(bookingId: string, status: string): void {
     const token = this.authService.getToken();
-    this.http.patch<{success: boolean, message: string}>(`${environment.apiUrl}/bookings/${bookingId}/status`, 
-      { status }, 
-      { headers: { 'Authorization': `Bearer ${token}` } }
-    ).subscribe({
+    let endpoint = '';
+    
+    if (status === 'CONFIRMED') {
+      endpoint = `${environment.apiUrl}/bookings/${bookingId}/approve`;
+    } else if (status === 'CANCELLED') {
+      endpoint = `${environment.apiUrl}/bookings/${bookingId}/reject`;
+    } else {
+      // For other status updates, use the general update endpoint
+      endpoint = `${environment.apiUrl}/bookings/${bookingId}`;
+    }
+
+    const body = status === 'CANCELLED' ? { reason: 'Rejected by admin' } : { status };
+
+    this.http.patch<{success: boolean, message: string}>(endpoint, body, {
+      headers: { 'Authorization': `Bearer ${token}` }
+    }).subscribe({
       next: (response) => {
-        if (response.success) {
-          this.loadBookings(); // Reload bookings
-          alert(`Booking ${status.toLowerCase()} successfully`);
-        } else {
-          alert(response.message || `Failed to ${status.toLowerCase()} booking`);
-        }
+        this.loadBookings(); // Reload bookings
+        alert(`Booking ${status.toLowerCase()} successfully`);
       },
       error: (error) => {
         console.error(`Error updating booking status:`, error);

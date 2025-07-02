@@ -1,1 +1,54 @@
-<p>profilesettings works!</p>
+<h2>User Profile</h2>
+
+<div class="profile-card">
+  <img [src]="imageUrl || 'assets/images/default-profile.svg'" alt="Profile" class="profile-img" />
+
+  <div class="info">
+    <p><strong>Name:</strong> {{ user.fullName || user.name }}</p>
+    <p><strong>Email:</strong> {{ user.email }}</p>
+    <p><strong>Role:</strong> {{ user.role }}</p>
+    <p><strong>Password:</strong> ******** <button (click)="showResetPassword = !showResetPassword" class="reset-btn">Reset Password</button></p>
+  </div>
+
+  <div class="upload-section">
+    <h4>Update Profile Image</h4>
+    <div class="file-input-container">
+      <input type="file" (change)="onFileSelected($event)" accept="image/*" id="fileInput" />
+      <label for="fileInput" class="file-input-label">
+        <i class="fas fa-camera"></i> Choose Image
+      </label>
+    </div>
+    <div *ngIf="selectedImage" class="selected-file">
+      <p>Selected: {{ selectedImage.name }}</p>
+      <p>Size: {{ (selectedImage.size / 1024).toFixed(1) }} KB</p>
+    </div>
+    <button (click)="uploadImage()" [disabled]="!selectedImage || uploading" class="upload-btn">
+      <i class="fas fa-upload"></i> {{ uploading ? 'Uploading...' : 'Upload Image' }}
+    </button>
+    <div *ngIf="uploading" class="upload-progress">
+      <div class="progress-bar"></div>
+    </div>
+  </div>
+
+  <div *ngIf="showResetPassword" class="reset-password-section">
+    <h3>Reset Password</h3>
+    <form (ngSubmit)="resetPassword()" #resetForm="ngForm">
+      <div>
+        <label>Current Password:</label>
+        <input type="password" [(ngModel)]="reset.currentPassword" name="currentPassword" required />
+      </div>
+      <div>
+        <label>New Password:</label>
+        <input type="password" [(ngModel)]="reset.newPassword" name="newPassword" required />
+      </div>
+      <div>
+        <label>Confirm New Password:</label>
+        <input type="password" [(ngModel)]="reset.confirmPassword" name="confirmPassword" required />
+      </div>
+      <button type="submit" [disabled]="resetting">Update Password</button>
+      <button type="button" (click)="showResetPassword = false">Cancel</button>
+      <div *ngIf="resetError" class="error-message">{{ resetError }}</div>
+      <div *ngIf="resetSuccess" class="success-message">{{ resetSuccess }}</div>
+    </form>
+  </div>
+</div>
